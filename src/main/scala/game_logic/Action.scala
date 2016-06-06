@@ -15,7 +15,7 @@ trait Action {
 }
 
 trait ActionTaker {
-  val meta: MetaData[ActionTakerId] = new MetaData[ActionTakerId](makeUntypedId)
+  val meta: MetaData[ActionTakerId] = new MetaData[ActionTakerId](generateUntypedId)
   var canUndoRedo:Boolean = true
 
   def sendActionRequest(action: Action, actionManager: ActionManager): Unit =
