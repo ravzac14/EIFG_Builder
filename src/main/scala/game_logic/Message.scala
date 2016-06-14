@@ -16,7 +16,7 @@ class Message(val subject: MessageSubject,
 object MessageSubject extends Enumeration {
   type MessageSubject = Value
 
-  // Add anything sends messages here
+  // Add anything that sends messages here
   val ActionUndoFailed = Value("ActionUndoFailed")
   val ActionRedoFailed = Value("ActionRedoFailed")
 }
