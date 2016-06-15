@@ -1,8 +1,9 @@
-package game_logic
+package game_logic.action
 
 import base.MetaData
-import base.types.ActionTakerId
 import base.Utils._
+import base.types.ActionTakerId
+import game_logic.global.ActionManager
 
 trait Action {
   // I'm thinking 1-10 should be sufficient

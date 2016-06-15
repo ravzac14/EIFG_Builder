@@ -5,7 +5,10 @@ package base
   * @param isActive - Describes the life-cycle of an item
   * @tparam T - Should describe the Id type and extend String
   */
-class MetaData[T <: String](val id: T, val isActive: Boolean = true)
+case class MetaData[T <: String](val id: T, val isActive: Boolean = true) {
+  def deactivate() = copy(isActive = false)
+  def activate() = copy(isActive = true)
+}
 
 /** Designed to keep track of "undone" and "redone" queue events
   *   in addition to storing the original elements in the main queue

@@ -1,4 +1,4 @@
-package game_logic
+package game_logic.item
 
 trait Item {
   val name: String

@@ -1,6 +1,6 @@
-package game_logic
+package game_logic.global
 
-import game_logic.MessageSubject.MessageSubject
+import game_logic.global.MessageSubject.MessageSubject
 
 /** Designed to be able to through messages to the user given
   *   some sort of side-effectual/expected effect

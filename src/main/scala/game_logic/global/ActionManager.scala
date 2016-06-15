@@ -1,7 +1,8 @@
-package game_logic
+package game_logic.global
 
 import base.DoQueue
 import base.types.ActionTakerId
+import game_logic.action.Action
 
 class ActionManager(messenger: GlobalMessenger) {
   val actionQueueMap: Map[ActionTakerId, ActionQueue] = Map.empty[ActionTakerId, ActionQueue]
