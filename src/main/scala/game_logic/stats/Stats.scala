@@ -31,7 +31,7 @@ case class Stats(val health: DescriptiveStat = new DescriptiveStat(100),
                  val stamina: DescriptiveStat = new DescriptiveStat(100),
                  val armorMultiplier: Float = 1.0F,
                  val mana: DescriptiveStat = new DescriptiveStat(100),
-                 val level: Int = 1,
+                 val experience: Int = 1,
                  val strength: ModifierStat = new ModifierStat(10),
                  val dexterity: ModifierStat = new ModifierStat(10),
                  val constitution: ModifierStat = new ModifierStat(10),
@@ -44,7 +44,7 @@ case class Stats(val health: DescriptiveStat = new DescriptiveStat(100),
   def modifyStamina(v: Int) = copy(stamina = new DescriptiveStat(this.stamina.value + v))
   def setArmorModifier(v: Float) = copy(armorMultiplier = v)
   def modifyMana(v: Int) = copy(mana = new DescriptiveStat(this.mana.value + v))
-  def modifyLevel(v: Int) = copy(level = this.level + v)
+  def modifyExperience(v: Int) = copy(experience = this.experience + v)
   def modifyStrength(v: Int) = copy(strength = new ModifierStat(this.strength.value + v))
   def modifyDexterity(v: Int) = copy(dexterity = new ModifierStat(this.dexterity.value + v))
   def modifyConstitution(v: Int) = copy(constitution = new ModifierStat(this.constitution.value + v))
@@ -56,6 +56,11 @@ case class Stats(val health: DescriptiveStat = new DescriptiveStat(100),
   def removeProficientSavingThrow(s: SavingThrowStat) = copy(proficientSavingThrows = this.proficientSavingThrows - s)
   def addProficientSkill(s: ProficientStat) = copy(proficientSkills = this.proficientSkills + s)
   def removeProficientSkill(s: ProficientStat) = copy(proficientSkills = this.proficientSkills - s)
+
+  // TODO: This based on something
+  def level = experience match {
+    case _ => 1
+  }
 
   val proficiencyBonus = level match {
     case l if l >= 15 => 5

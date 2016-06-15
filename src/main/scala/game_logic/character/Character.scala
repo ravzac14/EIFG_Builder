@@ -7,11 +7,13 @@ import game_logic.stats.SavingThrowStat.SavingThrowStat
 import game_logic.stats.{Stats, Buff}
 
 case class Character(val name: String = "Steve",
+                     val description: String = "",
                      val age: Int = 23,
                      val disposition: Disposition = Disposition.Neutral,
                      val buffs: Set[Buff] = Set(),
                      val inventory: Set[Item] = Set()) {
   def setName(n: String) = copy(name = n)
+  def setDescription(d: String) = copy(description = d)
   def modifyAge(v: Int) = copy(age = age + v)
   def setDisposition(d: Disposition) = copy(disposition = d)
   def addBuff(b: Buff) = copy(buffs = this.buffs + b)
@@ -25,7 +27,6 @@ case class Character(val name: String = "Steve",
   def modifyStamina(v: Int) = updateStat(_.modifyStamina(v))
   def setArmorModifier(v: Float) = updateStat(_.setArmorModifier(v))
   def modifyMana(v: Int) = updateStat(_.modifyMana(v))
-  def modifyLevel(v: Int) = updateStat(_.modifyLevel(v))
   def modifyStrength(v: Int) = updateStat(_.modifyStrength(v))
   def modifyDexterity(v: Int) = updateStat(_.modifyDexterity(v))
   def modifyConstitution(v: Int) = updateStat(_.modifyConstitution(v))
@@ -36,6 +37,20 @@ case class Character(val name: String = "Steve",
   def removeProficientSavingThrow(s: SavingThrowStat) = updateStat(_.removeProficientSavingThrow(s))
   def addProficientSkill(s: ProficientStat) = updateStat(_.addProficientSkill(s))
   def removeProficientSkill(s: ProficientStat) = updateStat(_.removeProficientSkill(s))
+
+  // This one is special, because it could mean "leveling up"
+  def modifyExperience(v: Int, withLevelUp: Boolean = true) = {
+    val startingLevel = stats.level
+    updateStat(_.modifyExperience(v))
+    if (withLevelUp) {
+      val endingLevel = stats.level
+      if (endingLevel > startingLevel)
+        (startingLevel to endingLevel).foreach(CharacterHelpers.levelUp(this, _))
+    }
+  }
+
+  // TODO: Expand on this (alter based on stats, age, race?, etc)
+  def defaultDescription = s"$name is $age years old, and has a $disposition disposition."
 }
 
 object Disposition extends Enumeration {
@@ -44,4 +59,9 @@ object Disposition extends Enumeration {
   val Friendly = Value("friendly")
   val Neutral = Value("neutral")
   val Hostile = Value("hostile")
+}
+
+object CharacterHelpers {
+  // TODO: Expand on this when more has been fleshed out
+  def levelUp(c: Character, l: Int) = ???
 }

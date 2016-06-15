@@ -10,10 +10,11 @@ import game_logic.stats.Buff
   *
   */
 class NonPlayableCharacter(name: String = "NPC",
+                           description: String = "",
                            age: Int = 1,
                            disposition: Disposition = Disposition.Neutral,
                            buffs: Set[Buff] = Set(),
                            inventory: Set[Item] = Set())
-  extends Character(name, age, disposition, buffs, inventory) with ActionTaker {
+  extends Character(name, description, age, disposition, buffs, inventory) with ActionTaker {
   this.canUndoRedo = false
 }
