@@ -7,7 +7,6 @@ import game_logic.stats.Buff
 
 /** This is a character that has some sort of AI
   *   associated with it
-  *
   */
 class NonPlayableCharacter(name: String = "NPC",
                            description: String = "",
