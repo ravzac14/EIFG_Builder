@@ -19,6 +19,7 @@ object MessageSubject extends Enumeration {
   // Add anything that sends messages here
   val ActionUndoFailed = Value("ActionUndoFailed")
   val ActionRedoFailed = Value("ActionRedoFailed")
+  val ActionFailed = Value("ActionFailed")
 }
 
 /** Note: Not sure if this is how I want to handle printable logging
@@ -27,5 +28,6 @@ object MessageSubject extends Enumeration {
 class GlobalMessenger {
   var messages: List[Message] = List.empty[Message]
 
+  def addMessage(message: Message): Unit = messages = message :: messages
   def lastActiveMessage: Message = messages.filter(_.isActive).head
 }

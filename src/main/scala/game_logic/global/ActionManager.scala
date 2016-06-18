@@ -7,6 +7,14 @@ import game_logic.action.Action
 class ActionManager(messenger: GlobalMessenger) {
   val actionQueueMap: Map[ActionTakerId, ActionQueue] = Map.empty[ActionTakerId, ActionQueue]
 
+  def failedActionMessage(action: Action) = new Message(
+    subject = MessageSubject.ActionFailed,
+    message = s"Action: ${action.name} is not allowed at this time.",
+    isActive = true)
+
+  def sendFailedAction(action: Action, actionTakerId: ActionTakerId): Unit =
+    messenger.addMessage(failedActionMessage(action))
+
   def enqueueAction(action: Action, actionTakerId: ActionTakerId): Unit =
     actionQueueMap.updated(
       actionTakerId,
@@ -41,7 +49,7 @@ class ActionQueue(messenger: GlobalMessenger,
     if (queue.nonEmpty && queue.head.canUndo)
       new ActionQueue(messenger, queue.tail, queue.head :: undoQueue)
     else {
-      messenger.messages = failedUndoMessage :: messenger.messages
+      messenger.addMessage(failedUndoMessage)
       this
     }
 
@@ -49,7 +57,7 @@ class ActionQueue(messenger: GlobalMessenger,
     if (undoQueue.nonEmpty && undoQueue.head.canRedo)
       new ActionQueue(messenger, undoQueue.head :: queue, undoQueue.tail)
     else {
-      messenger.messages = failedRedoMessage :: messenger.messages
+      messenger.addMessage(failedRedoMessage)
       this
     }
 }
