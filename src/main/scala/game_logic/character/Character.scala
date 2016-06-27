@@ -14,6 +14,8 @@ case class Character(val name: String = "Steve",
                      val inventory: Set[Item] = Set()) {
   def setName(n: String) = copy(name = n)
   def setDescription(d: String) = copy(description = d)
+  def appendDescription(d: String) = copy(description = this.description + " " + d)
+  def setAge(a: Int) = copy(age = a)
   def modifyAge(v: Int) = copy(age = age + v)
   def setDisposition(d: Disposition) = copy(disposition = d)
   def addBuff(b: Buff) = copy(buffs = this.buffs + b)
