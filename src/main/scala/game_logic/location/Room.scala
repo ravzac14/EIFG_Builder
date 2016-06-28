@@ -2,9 +2,6 @@ package game_logic.location
 
 import game_logic.location.Size.Size
 
-/** TODO: This should represent an ambiguously sized
-  * location square. With optional exits to the N, W, E, S
-  */
 trait Room {
   val name: String
   val description: String
@@ -55,5 +52,6 @@ trait Portal {
 /** This needs some information on how to be solved/bypassed
   * NOTE: Not sure if this should be more general to apply to
   * something greater.
+  * *** should be highly scriptable
   */
 trait Obstacle {}

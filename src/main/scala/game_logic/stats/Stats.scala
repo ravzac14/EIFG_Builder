@@ -14,7 +14,7 @@ import game_logic.stats.StatDescriptor.StatDescriptor
   *
   * This can calculate any combat, probably will just use
   *   strength mostly
-  * @param level        - Opportunities for stat gain
+  * @param experience   - Gauges a characters level
   * @param strength     - How hard one hits stuff
   * @param dexterity    - Sneak/quick/jumpy
   * @param constitution - Drinking/eating/resists
@@ -57,14 +57,35 @@ case class Stats(val health: DescriptiveStat = new DescriptiveStat(100),
   def addProficientSkill(s: ProficientStat) = copy(proficientSkills = this.proficientSkills + s)
   def removeProficientSkill(s: ProficientStat) = copy(proficientSkills = this.proficientSkills - s)
 
-  // TODO: This based on something
+  // TODO: This might be something based arbitrarily, not dnd stats
+  // but for now here's dnd stats
   def level = experience match {
+    case e if e >= 355000 => 20
+    case e if e >= 305000 => 19
+    case e if e >= 265000 => 18
+    case e if e >= 225000 => 17
+    case e if e >= 195000 => 16
+    case e if e >= 165000 => 15
+    case e if e >= 140000 => 14
+    case e if e >= 120000 => 13
+    case e if e >= 100000 => 12
+    case e if e >= 85000 => 11
+    case e if e >= 64000 => 10
+    case e if e >= 48000 => 9
+    case e if e >= 34000 => 8
+    case e if e >= 23000 => 7
+    case e if e >= 14000 => 6
+    case e if e >= 6500 => 5
+    case e if e >= 2700 => 4
+    case e if e >= 900 => 3
+    case e if e >= 300 => 2
     case _ => 1
   }
 
   val proficiencyBonus = level match {
-    case l if l >= 15 => 5
-    case l if l >= 10 => 4
+    case l if l >= 17 => 6
+    case l if l >= 13 => 5
+    case l if l >= 9 => 4
     case l if l >= 5 => 3
     case _ => 2
   }
