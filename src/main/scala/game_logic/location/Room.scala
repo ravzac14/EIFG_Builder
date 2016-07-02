@@ -1,5 +1,7 @@
 package game_logic.location
 
+import game_logic.action.Action
+import game_logic.event.Event
 import game_logic.location.Size.Size
 
 trait Room {
@@ -42,7 +44,7 @@ object Size extends Enumeration {
 }
 
 trait Portal {
-  val obstacle: Option[Obstacle]
+  val obstacles: Seq[Obstacle] // ordinary doors have Seq().empty[Obstacle]
   val hasBeenFound: Boolean
   val hasBeenOpened: Boolean
   val to: Room
@@ -54,4 +56,21 @@ trait Portal {
   * something greater.
   * *** should be highly scriptable
   */
-trait Obstacle {}
+trait Obstacle {
+  val description: String
+  var discovered: Boolean
+  var bypassed: Boolean
+  var failed: Boolean
+
+  // A list of algorithms to bypass/fail the obstacle
+  // ie. one possible could be:
+  // Seq(DiscoverObstacle, DisarmObstacle)
+  // or
+  // Seq(DiscoverObstacle, AvoidObstacle[Sneak])
+  val possibleActionsToBypass: Seq[Seq[Action]]
+  val possibleActionsToFail: Seq[Seq[Action]]
+
+  // The sequence of events triggered by a failed/bypassed obstacle
+  val bypassedEvents: Seq[Event]
+  val failedEvents: Seq[Event]
+}
