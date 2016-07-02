@@ -1,7 +1,7 @@
 package game_logic.location
 
 import game_logic.action.Action
-import game_logic.event.Event
+import game_logic.event.{Obstacle, Event}
 import game_logic.location.Size.Size
 
 trait Room {
@@ -49,28 +49,4 @@ trait Portal {
   val hasBeenOpened: Boolean
   val to: Room
   val from: Room
-}
-
-/** This needs some information on how to be solved/bypassed
-  * NOTE: Not sure if this should be more general to apply to
-  * something greater.
-  * *** should be highly scriptable
-  */
-trait Obstacle {
-  val description: String
-  var discovered: Boolean
-  var bypassed: Boolean
-  var failed: Boolean
-
-  // A list of algorithms to bypass/fail the obstacle
-  // ie. one possible could be:
-  // Seq(DiscoverObstacle, DisarmObstacle)
-  // or
-  // Seq(DiscoverObstacle, AvoidObstacle[Sneak])
-  val possibleActionsToBypass: Seq[Seq[Action]]
-  val possibleActionsToFail: Seq[Seq[Action]]
-
-  // The sequence of events triggered by a failed/bypassed obstacle
-  val bypassedEvents: Seq[Event]
-  val failedEvents: Seq[Event]
 }
