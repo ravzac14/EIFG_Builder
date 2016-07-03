@@ -1,8 +1,6 @@
 package game_logic.global
 
-import game_logic.ActorManager
 import game_logic.event.{TimedEvent, CombatEvent}
-import game_logic.stats.StatDescriptor
 
 trait GameLoop {
   def run: Unit = ???
@@ -11,7 +9,7 @@ trait GameLoop {
 // These probably take a bunch of globals
 class CombatLoop(actorManager: ActorManager, event: CombatEvent) extends GameLoop {
   override def run: Unit =
-    if (actorManager.partyWiped || event.enemies.forall(_.stats.health == StatDescriptor.Empty)) {
+    if (actorManager.isPartyWiped || event.enemies.forall(_.isDead)) {
       // Do the sideEffects for either case
       ???
     } else {

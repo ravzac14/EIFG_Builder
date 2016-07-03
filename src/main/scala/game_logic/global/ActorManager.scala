@@ -1,8 +1,7 @@
-package game_logic
+package game_logic.global
 
 import game_logic.character.Actor
-import game_logic.stats.StatDescriptor
 
 class ActorManager(pcs: Set[Actor]) {
-  def partyWiped: Boolean = pcs.forall(_.stats.health == StatDescriptor.Empty)
+  def isPartyWiped: Boolean = pcs.forall(_.isDead)
 }

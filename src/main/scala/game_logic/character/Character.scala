@@ -4,7 +4,7 @@ import game_logic.character.Disposition.Disposition
 import game_logic.item.Item
 import game_logic.stats.ProficientStat.ProficientStat
 import game_logic.stats.SavingThrowStat.SavingThrowStat
-import game_logic.stats.{Stats, Buff}
+import game_logic.stats.{StatDescriptor, Stats, Buff}
 
 case class Character(val name: String = "Steve",
                      val description: String = "",
@@ -41,7 +41,7 @@ case class Character(val name: String = "Steve",
   def removeProficientSkill(s: ProficientStat) = updateStat(_.removeProficientSkill(s))
 
   // This one is special, because it could mean "leveling up"
-  def modifyExperience(v: Int, withLevelUp: Boolean = true) = {
+  def modifyExperience(v: Int, withLevelUp: Boolean = true): Unit = {
     val startingLevel = stats.level
     updateStat(_.modifyExperience(v))
     if (withLevelUp) {
@@ -52,12 +52,12 @@ case class Character(val name: String = "Steve",
   }
 
   // TODO: Expand on this (alter based on stats, age, race?, etc)
-  def defaultDescription = s"$name is $age years old, and has a $disposition disposition."
+  def defaultDescription: String = s"$name is $age years old, and has a $disposition disposition."
+  def isDead: Boolean = stats.health.description == StatDescriptor.Empty
 }
 
 object Disposition extends Enumeration {
   type Disposition = Value
-
   val Friendly = Value("friendly")
   val Neutral = Value("neutral")
   val Hostile = Value("hostile")
