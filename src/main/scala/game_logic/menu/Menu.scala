@@ -10,21 +10,16 @@ class MenuTree(
   var currentMenuScreen: MenuScreen) {
 
   def printMenu: Unit = {
-    println("$name\n")
+    println(s"${currentMenuScreen.name}\n")
     currentMenuScreen.children.foreach(ms => println(ms.name))
   }
 
   // Either it takes care of it's own side effects or it describes to the Loop where to go next
-  def processSelection(selection: String): Option[GameLoop] =
+  def processSelection(selection: String): Either[MenuTree, GameLoop] =
     currentMenuScreen.children.find(_.name.toLowerCase() == selection.trim.toLowerCase) match {
-      case Some(r: MenuScreenResult) =>
-        this.currentMenuScreen = r.menuScreen
-        None
-      case Some(r: SideEffectResult) =>
-        Some(r.gameLoop)
-      case _ =>
-        println(MenuHelpers.unknownSelectionMessage(selection))
-        None
+      case Some(r: MenuScreenResult) => this.currentMenuScreen = r.menuScreen; Left(this)
+      case Some(r: SideEffectResult) => Right(r.gameLoop)
+      case _ => println(MenuHelpers.unknownSelectionMessage(selection)); Left(this)
     }
 }
 
@@ -39,10 +34,10 @@ case class MenuScreenResult(screenName: String, val menuScreen: MenuScreen) exte
 case class SideEffectResult(screenName: String, val gameLoop: GameLoop) extends MenuResult(screenName)
 
 object MenuHelpers {
-  def unknownSelectionMessage(selection: String): String = s"Menu selection \"${selection.trim}\" could not be found."
+  def unknownSelectionMessage(selection: String): String = s"Menu selection '${selection.trim}' could not be found."
 
   // TODO: This
-  def getSavesAsMenuResults(): Seq[SideEffectResult] = ???
+  def getSavesAsMenuResults(): Seq[SideEffectResult] = Seq()
 
   /** Should build the standard main menu (ie. New Game, Load Game, Settings, Exit)
  *
