@@ -1,5 +1,6 @@
 package game_logic.menu
 
+import base.AsciiHelpers
 import game_logic.global.GameLoop
 
 // TODO: This will be given the global console
@@ -43,10 +44,8 @@ object MenuHelpers {
   // TODO: This
   def getSavesAsMenuResults(): Seq[SideEffectResult] = ???
 
-  // TODO: Print title as ascii
-  def buildAsciiTitle(title: String): String = ???
-
   /** Should build the standard main menu (ie. New Game, Load Game, Settings, Exit)
+ *
     * @param gameTitle - comes in as a computer readable string
     */
   def buildDefaultMainMenu(gameTitle: String, initialGameLoop: GameLoop, exitGameLoop: GameLoop): MenuTree = {
@@ -64,6 +63,9 @@ object MenuHelpers {
     val exit: SideEffectResult = new SideEffectResult("Exit", exitGameLoop)
     val mainMenuScreen: MenuScreen = new MenuScreen("Main Menu", Seq(playNewGame, loadGame, settings, exit))
 
-    new MenuTree(buildAsciiTitle(gameTitle), Seq(mainMenuScreen, loadGameMenuScreen, settingsMenuScreen), mainMenuScreen)
+    new MenuTree(
+      AsciiHelpers.buildAsciiString(gameTitle),
+      Seq(mainMenuScreen, loadGameMenuScreen, settingsMenuScreen),
+      mainMenuScreen)
   }
 }

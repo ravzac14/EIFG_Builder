@@ -11,7 +11,7 @@ case class MenuLoopParams(val menu: MenuTree) extends GameLoopParams
 class MenuLoop(params: MenuLoopParams) extends GameLoop(params) {
   override def run: Unit = {
     params.menu.printMenu
-    val selection = readLine()
+    val selection = Console.readLine()
     val maybeNewGameLoop: Option[GameLoop] = params.menu.processSelection(selection)
     ??? // TODO: How to get the new game loop to the game
   }
