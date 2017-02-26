@@ -10,7 +10,7 @@ object EIFG_Builder extends App {
   }
   override def main(args: Array[String]): Unit = {
     val mainMenuTree = MenuHelpers.buildDefaultMainMenu("The Butt Game", Defaults.startGameLoop, Defaults.exitGameLoop)
-    val initialLoop = new MenuLoop(MenuLoopParams(mainMenuTree))
+    val initialLoop = new MenuLoop(MenuLoopParams(menu = mainMenuTree))
     looper(initialLoop)
   }
 }

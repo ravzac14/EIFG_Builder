@@ -16,22 +16,19 @@ case class MetaData[T <: String](val id: T, val isActive: Boolean = true) {
   * @param undoQueue - Used to keep track of undone actions (and process undos/redos)
   * @tparam T - Inner type of DoQueue
   */
-class DoQueue[T](val queue: List[T], val undoQueue: List[T]) {
-  def enqueue(elem: T): DoQueue[T] =
-    new DoQueue[T](elem :: queue, undoQueue)
+case class DoQueue[T](val queue: List[T], val undoQueue: List[T]) {
+  def enqueue(elem: T): DoQueue[T] = this.copy(queue = elem :: queue)
 
   def undo: DoQueue[T] =
-    if (queue.nonEmpty)
-      new DoQueue[T](queue.tail, queue.head :: undoQueue)
+    if (queue.nonEmpty) this.copy(queue = queue.tail, undoQueue = queue.head :: undoQueue)
     else this
 
   def redo: DoQueue[T] =
-    if (undoQueue.nonEmpty)
-      new DoQueue[T](undoQueue.head :: queue, undoQueue.tail)
+    if (undoQueue.nonEmpty) this.copy(queue = undoQueue.head :: queue, undoQueue = undoQueue.tail)
     else this
 }
 
-/** Safe place for my customer types
+/** Safe place for my custom types
   */
 package object types {
   // ################### ID type synonyms #####################

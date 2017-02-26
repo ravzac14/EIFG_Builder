@@ -7,7 +7,7 @@ import scala.sys.process._
 import scala.util.Random
 
 object Utils {
-  val Random = new Random()
+  lazy val Random = new Random()
 
   def generateUntypedId: String = UUID.randomUUID().toString
     .replaceAll("-", Random.nextInt(10).toString)

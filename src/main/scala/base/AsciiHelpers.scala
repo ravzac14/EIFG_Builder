@@ -2,33 +2,33 @@ package base
 
 object AsciiHelpers {
 
-  val EmptyChar = Seq("","","","","","","","","","")
-  def isAsciiCharEmpty(ac: Seq[String]): Boolean = ac.forall(_.isEmpty)
-  def isAsciiCharSpace(ac: Seq[String]): Boolean = !isAsciiCharEmpty(ac) && ac.forall(_.trim.isEmpty)
+  private val EmptyChar = Seq("","","","","","","","","","")
+  private def isAsciiCharEmpty(ac: Seq[String]): Boolean = ac.forall(_.isEmpty)
+  private def isAsciiCharSpace(ac: Seq[String]): Boolean = !isAsciiCharEmpty(ac) && ac.forall(_.trim.isEmpty)
 
-  def buildAsciiCharArray(title: String): Seq[String] = {
+  def buildAsciiString(title: String): String = buildAsciiCharArray(title).mkString("\n")
+
+  private def buildAsciiCharArray(title: String): Seq[String] = {
     val chars = title.toCharArray
     val asciiChars = chars.map(toAsciiChar)
     asciiChars.foldRight(EmptyChar) { (rows, acc) =>
       require(rows.length == acc.length)
       Seq(
-        rows(0) ++ acc(0),
-        rows(1) ++ acc(1),
-        rows(2) ++ acc(2),
-        rows(3) ++ acc(3),
-        rows(4) ++ acc(4),
-        rows(5) ++ acc(5),
-        rows(6) ++ acc(6),
-        rows(7) ++ acc(7),
-        rows(8) ++ acc(8),
-        rows(9) ++ acc(9)
+        rows(0) ++ " " ++ acc(0),
+        rows(1) ++ " " ++ acc(1),
+        rows(2) ++ " " ++ acc(2),
+        rows(3) ++ " " ++ acc(3),
+        rows(4) ++ " " ++ acc(4),
+        rows(5) ++ " " ++ acc(5),
+        rows(6) ++ " " ++ acc(6),
+        rows(7) ++ " " ++ acc(7),
+        rows(8) ++ " " ++ acc(8),
+        rows(9) ++ " " ++ acc(9)
       )
     }
   }
 
-  def buildAsciiString(title: String): String = buildAsciiCharArray(title).mkString("\n")
-
-  def toAsciiChar(c: Char): Seq[String] = c match {
+  private def toAsciiChar(c: Char): Seq[String] = c match {
     case 'a' =>
       Seq("      ",
           "      ",

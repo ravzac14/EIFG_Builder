@@ -6,9 +6,9 @@ import base.types.ActionTakerId
 import game_logic.global.ActionManager
 
 trait Action {
-  // I'm thinking 1-10 should be sufficient
   val name: String
   val description: String
+  // I'm thinking 1-10 should be sufficient
   val priority: Int = 5
   val canUndo: Boolean = true
   val canRedo: Boolean = true
