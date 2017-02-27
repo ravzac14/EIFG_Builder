@@ -1,7 +1,7 @@
 package builder
 
 import game_logic.global._
-import game_logic.menu.MenuHelpers
+import ui.menu.MenuHelpers
 
 object EIFG_Builder extends App {
   def looper(gameLoop: GameLoop): GameLoop = {

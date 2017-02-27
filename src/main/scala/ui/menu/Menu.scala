@@ -1,9 +1,9 @@
-package game_logic.menu
+package ui.menu
 
 import base.AsciiHelpers
 import game_logic.global.GameLoop
 
-// TODO: This will be given the global console
+// TODO: This will be given the global ui.console
 class MenuTree(
   val name: String,
   val menuScreens: Seq[MenuScreen],

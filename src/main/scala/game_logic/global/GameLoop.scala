@@ -1,8 +1,8 @@
 package game_logic.global
 
 import game_logic.event.{ TimedEvent, CombatEvent }
-import game_logic.menu.MenuTree
-import base.Utils._
+import ui.menu.MenuTree
+import ui.console._
 
 // run returns the next GameLoop, which can just be the same loop updated
 trait GameLoopParams {}

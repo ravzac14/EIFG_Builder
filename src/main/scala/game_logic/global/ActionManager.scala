@@ -32,7 +32,7 @@ class ActionManager(messenger: GlobalMessenger) {
       messenger.addMessage(ActionHelpers.failedRedoMessage)
 }
 
-case class ActionQueue(
+class ActionQueue(
   messenger: GlobalMessenger,
   override val queue: List[Action] = List.empty[Action],
   override val undoQueue: List[Action] = List.empty[Action])
