@@ -28,6 +28,10 @@ case class DoQueue[T](val queue: List[T], val undoQueue: List[T]) {
     else this
 }
 
+trait AppWithJsonFormats extends App {
+  implicit val formats = org.json4s.DefaultFormats
+}
+
 /** Safe place for my custom types
   */
 package object types {

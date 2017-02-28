@@ -40,7 +40,7 @@ object MenuHelpers {
   def getSavesAsMenuResults(): Seq[SideEffectResult] = Seq()
 
   /** Should build the standard main menu (ie. New Game, Load Game, Settings, Exit)
- *
+    *
     * @param gameTitle - comes in as a computer readable string
     */
   def buildDefaultMainMenu(gameTitle: String, initialGameLoop: GameLoop, exitGameLoop: GameLoop): MenuTree = {

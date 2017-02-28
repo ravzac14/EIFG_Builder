@@ -16,3 +16,5 @@ connectInput in run := true
 ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
 
 scalaVersion := "2.11.0"
+
+trapExit := false
