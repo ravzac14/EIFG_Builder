@@ -7,7 +7,7 @@ package base
   * @tparam T - Should describe the Id type and extend String
   */
 case class MetaData[T <: String](
-  val id: T,
+  val id: T = Utils.generateUntypedId.asInstanceOf[T],
   val isActive: Boolean = true,
   val timeCreated: Long = System.currentTimeMillis(),
   val lastModified: Long = System.currentTimeMillis()) {
