@@ -9,4 +9,7 @@ object Utils {
   def generateUntypedId: String = UUID.randomUUID().toString
     .replaceAll("-", Random.nextInt(10).toString)
     .replaceAll(" ", Random.nextInt(10).toString)
+
+  def gameTitleKey(title: String) =
+    title.trim.filter(_.isLetterOrDigit).capitalize
 }

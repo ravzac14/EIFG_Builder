@@ -1,17 +1,26 @@
 package base
 
 /** Holds the inner life/identifier data for any given object
+  *
   * @param id - A unique 32 bit id
   * @param isActive - Describes the life-cycle of an item
   * @tparam T - Should describe the Id type and extend String
   */
-case class MetaData[T <: String](val id: T, val isActive: Boolean = true) {
+case class MetaData[T <: String](
+  val id: T,
+  val isActive: Boolean = true,
+  val timeCreated: Long = System.currentTimeMillis(),
+  val lastModified: Long = System.currentTimeMillis()) {
+  def touch(newLastModified: Long = System.currentTimeMillis(), newIsActive: Option[Boolean] = None) =
+    if (newIsActive.isDefined) this.copy(isActive = newIsActive.get, lastModified = newLastModified)
+    else this.copy(lastModified = newLastModified)
   def deactivate() = copy(isActive = false)
   def activate() = copy(isActive = true)
 }
 
 /** Designed to keep track of "undone" and "redone" queue events
   *   in addition to storing the original elements in the main queue
+  *
   * @param queue     - Used as the main store of T's
   * @param undoQueue - Used to keep track of undone actions (and process undos/redos)
   * @tparam T - Inner type of DoQueue
@@ -37,4 +46,6 @@ trait AppWithJsonFormats extends App {
 package object types {
   // ################### ID type synonyms #####################
   type ActionTakerId = String
+
+  type FileEntryId = String
 }
