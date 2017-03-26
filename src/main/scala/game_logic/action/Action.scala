@@ -1,7 +1,7 @@
 package game_logic.action
 
-import base.MetaData
 import base.Utils._
+import base.data_structures.Meta
 import base.types.ActionTakerId
 import game_logic.global.ActionManager
 
@@ -19,7 +19,7 @@ trait Action {
 }
 
 trait ActionTaker {
-  val meta: MetaData[ActionTakerId] = new MetaData[ActionTakerId](generateUntypedId)
+  val meta: Meta[ActionTakerId] = new Meta[ActionTakerId](generateUntypedId)
   var canUndoRedo: Boolean = true
   var prohibitedActions: Seq[Action] = Seq.empty[Action]
 

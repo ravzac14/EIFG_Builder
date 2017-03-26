@@ -1,8 +1,7 @@
 package system.serialize
 
-import base.Utils
+import base.StringFormatters
 
-import scala.util.Try
 import scala.util.matching.Regex
 
 object PathHelpers {
@@ -39,7 +38,7 @@ object PathHelpers {
 
   /******************** Game specific directories **********************/
   def GameDirectoryPath(title: String) =
-    Constants.EIFGDirectoryPath + "/" + Utils.gameTitleKey(title)
+    Constants.EIFGDirectoryPath + "/" + StringFormatters.gameTitleKey(title)
 
   /******************** Save File Constants **********************/
   def MasterSaveFileLineFormat(path: String, timeCreated: Long, lastModified: Long, alias: String) =

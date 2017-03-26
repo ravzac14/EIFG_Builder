@@ -1,6 +1,6 @@
 package game_logic.global
 
-import base.DoQueue
+import base.data_structures.DoQueue
 import base.types.ActionTakerId
 import game_logic.action.Action
 

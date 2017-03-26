@@ -1,13 +1,13 @@
 package system.serialize
 
-import base.MetaData
+import base.data_structures.Meta
 import base.types.FileEntryId
 import system.serialize.PathHelpers.Constants
 
 import scala.io.Source
 
 case class FileEntry(
-  meta: MetaData[FileEntryId],
+  meta: Meta[FileEntryId],
   path: String,
   fileName: String,
   gameTitle: String,
