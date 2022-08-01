@@ -1,7 +1,7 @@
 package game_logic.event
 
 import game_logic.character.NonPlayableCharacter
-import game_logic.location.{BoonZone, Zone, HazardZone}
+import game_logic.location.{ BoonZone, Zone, HazardZone }
 
 // TODO: This should be something that "happens" and can be
 // triggered in any number of way (ie. EnterLocation, AcquireItem, FailedObstacle, BypassedObstacle, etc)
@@ -13,7 +13,6 @@ trait Event {
 
   def beginEvent: Unit = this.hasBegun = true
   def concludeEvent: Unit = {
-    this.hasBegun = false
     this.hasConcluded = true
   }
 }
@@ -47,7 +46,8 @@ trait FailableEvent extends Event {
     }
 
     // Handle optionals
-    optionalObjectives.foreach(o => if (o.hasBeenMet) o.successEffects else o.failedEffects)
+    optionalObjectives.foreach(o =>
+      if (o.hasBeenMet) o.successEffects else o.failedEffects)
   }
 
 }

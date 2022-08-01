@@ -7,12 +7,13 @@ import system.serialize.PathHelpers.Constants
 import scala.io.Source
 
 case class FileEntry(
-  meta: Meta[FileEntryId],
-  path: String,
-  fileName: String,
-  gameTitle: String,
-  fileType: FileType.Value,
-  alias: Option[String] = None) {
+    meta: Meta[FileEntryId],
+    path: String,
+    fileName: String,
+    gameTitle: String,
+    fileType: FileType.Value,
+    alias: Option[String] = None
+) {
   def isValid = FileEntry.isFileEntryInMaster(this)
 
   def toMasterFileLine =
@@ -20,19 +21,19 @@ case class FileEntry(
       path = path,
       timeCreated = Some(meta.timeCreated),
       lastModified = Some(meta.lastModified),
-      alias = alias)
+      alias = alias
+    )
 }
 
 object FileType extends Enumeration {
   val Save = Value(Constants.SaveFilePrefix)
 
-  val prefixToFileTypeMap = this.values.map { ft =>
-    ft.toString -> ft
-  }.toMap
+  val prefixToFileTypeMap: Map[FileEntryId, FileType.Value] =
+    this.values.map(ft => ft.toString -> ft).toMap
 
   def fileExtension(fileType: FileType.Value) = fileType match {
     case Save => Some(Constants.EIFGFileType)
-    case _ => None
+    case _    => None
   }
 }
 
@@ -43,4 +44,3 @@ object FileEntry {
       .getLines()
       .contains(fileEntry.toMasterFileLine)
 }
-

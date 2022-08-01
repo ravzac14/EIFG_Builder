@@ -4,7 +4,5 @@ package game_logic.location
 //  Rooms from the json
 class WorldMap(val rooms: Seq[Room]) {
   // TODO: Print each room if visited
-  def printVisitedMap: Unit = {
-
-  }
+  def printVisitedMap: Unit = ???
 }

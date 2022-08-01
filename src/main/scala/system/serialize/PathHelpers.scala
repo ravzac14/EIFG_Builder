@@ -12,36 +12,54 @@ object PathHelpers {
     val SerializedFileType = ".sl"
     val ConfigFileType = ".cg"
 
-    /******************** Master File Related **********************/
+    /** ****************** Master File Related *********************
+      */
     val MasterFileName =
       "youcantryitmightbreaktho" + FileType.fileExtension(FileType.Save)
 
-    /******************** Save File Constants **********************/
+    /** ****************** Save File Constants *********************
+      */
     val SaveFilePrefix = "save"
     val SaveFileRegex =
       s"""$SaveFilePrefix[0-9]+${FileType.fileExtension(FileType.Save)}""".r
 
-    /******************** File Sets **********************/
+    /** ****************** File Sets *********************
+      */
     val allFilePrefixes = Set(SaveFilePrefix)
     val allFileTypes = Set(EIFGFileType, SerializedFileType, ConfigFileType)
   }
 
-  /******************** Master File Related **********************/
+  /** ****************** Master File Related *********************
+    */
   // TODO(zack): Add backup/older versions of Master file
-  def MasterFilePath(title: String) = GameDirectoryPath(title) + "/" + Constants.MasterFileName
+  def MasterFilePath(title: String) =
+    GameDirectoryPath(title) + "/" + Constants.MasterFileName
   def MasterFileLineFormat(
-    path: String,
-    timeCreated: Option[Long],
-    lastModified: Option[Long],
-    alias: Option[String]) =
-    Seq(path, timeCreated.getOrElse(""), lastModified.getOrElse(""), alias.getOrElse("")).mkString(",")
+      path: String,
+      timeCreated: Option[Long],
+      lastModified: Option[Long],
+      alias: Option[String]
+  ) =
+    Seq(
+      path,
+      timeCreated.getOrElse(""),
+      lastModified.getOrElse(""),
+      alias.getOrElse("")
+    ).mkString(",")
 
-  /******************** Game specific directories **********************/
+  /** ****************** Game specific directories *********************
+    */
   def GameDirectoryPath(title: String) =
     Constants.EIFGDirectoryPath + "/" + StringFormatters.gameTitleKey(title)
 
-  /******************** Save File Constants **********************/
-  def MasterSaveFileLineFormat(path: String, timeCreated: Long, lastModified: Long, alias: String) =
+  /** ****************** Save File Constants *********************
+    */
+  def MasterSaveFileLineFormat(
+      path: String,
+      timeCreated: Long,
+      lastModified: Long,
+      alias: String
+  ) =
     Seq(path, timeCreated, lastModified, alias).mkString(",")
 
   private def constantsForFileType(fileType: FileType.Value): (Regex, String) =

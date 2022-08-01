@@ -23,10 +23,12 @@ trait ActionTaker {
   var canUndoRedo: Boolean = true
   var prohibitedActions: Seq[Action] = Seq.empty[Action]
 
-  def addProhibitedActions(actions: Seq[Action]): Unit = prohibitedActions ++ actions
+  def addProhibitedActions(actions: Seq[Action]): Unit =
+    prohibitedActions ++ actions
 
   def sendActionRequest(action: Action, actionManager: ActionManager): Unit =
-    if (!prohibitedActions.contains(action)) actionManager.enqueueAction(action, meta.id)
+    if (!prohibitedActions.contains(action))
+      actionManager.enqueueAction(action, meta.id)
     else actionManager.sendFailedAction(action, meta.id)
 
   def sendUndoActionRequest(actionManager: ActionManager): Unit =

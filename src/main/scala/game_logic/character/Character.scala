@@ -4,17 +4,20 @@ import game_logic.character.Disposition.Disposition
 import game_logic.item.Item
 import game_logic.stats.ProficientStat.ProficientStat
 import game_logic.stats.SavingThrowStat.SavingThrowStat
-import game_logic.stats.{StatDescriptor, Stats, Buff}
+import game_logic.stats.{ StatDescriptor, Stats, Buff }
 
-case class Character(val name: String = "Steve",
-                     val description: String = "",
-                     val age: Int = 23,
-                     val disposition: Disposition = Disposition.Neutral,
-                     val buffs: Set[Buff] = Set(),
-                     val inventory: Set[Item] = Set()) {
+case class Character(
+    val name: String = "Steve",
+    val description: String = "",
+    val age: Int = 23,
+    val disposition: Disposition = Disposition.Neutral,
+    val buffs: Set[Buff] = Set(),
+    val inventory: Set[Item] = Set()
+) {
   def setName(n: String) = copy(name = n)
   def setDescription(d: String) = copy(description = d)
-  def appendDescription(d: String) = copy(description = this.description + " " + d)
+  def appendDescription(d: String) =
+    copy(description = this.description + " " + d)
   def setAge(a: Int) = copy(age = a)
   def modifyAge(v: Int) = copy(age = age + v)
   def setDisposition(d: Disposition) = copy(disposition = d)
@@ -35,10 +38,18 @@ case class Character(val name: String = "Steve",
   def modifyIntelligence(v: Int) = updateStat(_.modifyIntelligence(v))
   def modifyWisdom(v: Int) = updateStat(_.modifyWisdom(v))
   def modifyCharisma(v: Int) = updateStat(_.modifyCharisma(v))
-  def addProficientSavingThrow(s: SavingThrowStat) = updateStat(_.addProficientSavingThrow(s))
-  def removeProficientSavingThrow(s: SavingThrowStat) = updateStat(_.removeProficientSavingThrow(s))
-  def addProficientSkill(s: ProficientStat) = updateStat(_.addProficientSkill(s))
-  def removeProficientSkill(s: ProficientStat) = updateStat(_.removeProficientSkill(s))
+  def addProficientSavingThrow(s: SavingThrowStat) = updateStat(
+    _.addProficientSavingThrow(s)
+  )
+  def removeProficientSavingThrow(s: SavingThrowStat) = updateStat(
+    _.removeProficientSavingThrow(s)
+  )
+  def addProficientSkill(s: ProficientStat) = updateStat(
+    _.addProficientSkill(s)
+  )
+  def removeProficientSkill(s: ProficientStat) = updateStat(
+    _.removeProficientSkill(s)
+  )
 
   // This one is special, because it could mean "leveling up"
   def modifyExperience(v: Int, withLevelUp: Boolean = true): Unit = {
@@ -47,12 +58,15 @@ case class Character(val name: String = "Steve",
     if (withLevelUp) {
       val endingLevel = stats.level
       if (endingLevel > startingLevel)
-        (startingLevel to endingLevel).foreach(CharacterHelpers.levelUp(this, _))
+        (startingLevel to endingLevel).foreach(
+          CharacterHelpers.levelUp(this, _)
+        )
     }
   }
 
   // TODO: Expand on this (alter based on stats, age, race?, etc)
-  def defaultDescription: String = s"$name is $age years old, and has a $disposition disposition."
+  def defaultDescription: String =
+    s"$name is $age years old, and has a $disposition disposition."
   def isDead: Boolean = stats.health.description == StatDescriptor.Empty
 }
 

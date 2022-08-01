@@ -11,10 +11,12 @@ case class DoQueue[T](val queue: List[T], val undoQueue: List[T]) {
   def enqueue(elem: T): DoQueue[T] = this.copy(queue = elem :: queue)
 
   def undo: DoQueue[T] =
-    if (queue.nonEmpty) this.copy(queue = queue.tail, undoQueue = queue.head :: undoQueue)
+    if (queue.nonEmpty)
+      this.copy(queue = queue.tail, undoQueue = queue.head :: undoQueue)
     else this
 
   def redo: DoQueue[T] =
-    if (undoQueue.nonEmpty) this.copy(queue = undoQueue.head :: queue, undoQueue = undoQueue.tail)
+    if (undoQueue.nonEmpty)
+      this.copy(queue = undoQueue.head :: queue, undoQueue = undoQueue.tail)
     else this
 }

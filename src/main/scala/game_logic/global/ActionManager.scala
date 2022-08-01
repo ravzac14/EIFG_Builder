@@ -6,17 +6,18 @@ import game_logic.action.Action
 
 class ActionManager(messenger: GlobalMessenger) {
 
-  val actionQueueMap: Map[ActionTakerId, ActionQueue] = Map.empty[ActionTakerId, ActionQueue]
+  val actionQueueMap: Map[ActionTakerId, ActionQueue] =
+    Map.empty[ActionTakerId, ActionQueue]
 
   def enqueueAction(action: Action, actionTakerId: ActionTakerId): Unit =
     actionQueueMap.updated(
       actionTakerId,
-      actionQueueMap.getOrElse(actionTakerId, new ActionQueue(messenger)).enqueue(action)
+      actionQueueMap
+        .getOrElse(actionTakerId, new ActionQueue(messenger))
+        .enqueue(action)
     )
 
-  def sendFailedAction(
-    action: Action,
-    actionTakerId: ActionTakerId): Unit =
+  def sendFailedAction(action: Action, actionTakerId: ActionTakerId): Unit =
     messenger.addMessage(ActionHelpers.failedActionMessage(action))
 
   def undo(actionTakerId: ActionTakerId): Unit =
@@ -33,10 +34,10 @@ class ActionManager(messenger: GlobalMessenger) {
 }
 
 class ActionQueue(
-  messenger: GlobalMessenger,
-  override val queue: List[Action] = List.empty[Action],
-  override val undoQueue: List[Action] = List.empty[Action])
-  extends DoQueue[Action](queue, undoQueue) {
+    messenger: GlobalMessenger,
+    override val queue: List[Action] = List.empty[Action],
+    override val undoQueue: List[Action] = List.empty[Action]
+) extends DoQueue[Action](queue, undoQueue) {
 
   override def undo =
     if (queue.nonEmpty && queue.head.canUndo)
@@ -58,13 +59,16 @@ class ActionQueue(
 object ActionHelpers {
   def failedActionMessage(action: Action) = new Message(
     subject = MessageSubject.ActionFailed,
-    message = s"Action: ${action.name} is not allowed at this time.")
+    message = s"Action: ${action.name} is not allowed at this time."
+  )
 
   def failedUndoMessage = new Message(
     subject = MessageSubject.ActionUndoFailed,
-    message = "Impossible undo request...")
+    message = "Impossible undo request..."
+  )
 
   def failedRedoMessage = new Message(
     subject = MessageSubject.ActionRedoFailed,
-    message = "Impossible redo request...")
+    message = "Impossible redo request..."
+  )
 }
