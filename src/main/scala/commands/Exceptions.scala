@@ -13,13 +13,11 @@ object Exceptions {
       extends RuntimeException(s"Input [${strings.mkString(
         CommandWordDelim)}] partially matched the command [${command.name}]")
 
-  class MissingFreeformInputException(
-      strings: Seq[String],
-      commandMeta: CommandMeta)
+  class MissingInputException(strings: Seq[String], commandMeta: CommandMeta)
       extends RuntimeException(
         s"Input [${strings.mkString(CommandWordDelim)}] was missing an expected freeform input component for command [${commandMeta.name}]")
 
-  class InvalidFreeformInputException(
+  class InvalidInputException(
       name: String,
       inputWords: Seq[String],
       reason: String)

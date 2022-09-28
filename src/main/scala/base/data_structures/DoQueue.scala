@@ -7,16 +7,38 @@ package base.data_structures
   * @param undoQueue - Used to keep track of undone actions (and process undos/redos)
   * @tparam T - Inner type of DoQueue
   */
-case class DoQueue[T](val queue: List[T], val undoQueue: List[T]) {
-  def enqueue(elem: T): DoQueue[T] = this.copy(queue = elem :: queue)
+case class DoQueue[T](queue: Seq[T], undoQueue: Seq[T]) {
+  def enqueue(elem: T): DoQueue[T] = this.copy(queue = elem +: queue)
 
-  def undo: DoQueue[T] =
-    if (queue.nonEmpty)
-      this.copy(queue = queue.tail, undoQueue = queue.head :: undoQueue)
-    else this
+  def peak(): Option[T] = queue.headOption
+  def peakUndo(): Option[T] = undoQueue.headOption
 
-  def redo: DoQueue[T] =
-    if (undoQueue.nonEmpty)
-      this.copy(queue = undoQueue.head :: queue, undoQueue = undoQueue.tail)
-    else this
+  def nonEmpty: Boolean = queue.nonEmpty && undoQueue.nonEmpty
+  def isEmpty: Boolean = !nonEmpty
+
+  def undo: (Option[T], DoQueue[T]) =
+    if (queue.nonEmpty) {
+      val undone = queue.headOption
+      (
+        undone,
+        this.copy(queue = queue.tail, undoQueue = queue.head +: undoQueue))
+    } else {
+      (None, this)
+    }
+
+  def redo: (Option[T], DoQueue[T]) = {
+    if (undoQueue.nonEmpty) {
+      val redone = undoQueue.headOption
+      (
+        redone,
+        this.copy(queue = undoQueue.head +: queue, undoQueue = undoQueue.tail))
+    } else {
+      (None, this)
+    }
+  }
+}
+
+object DoQueue {
+
+  def empty[T]: DoQueue[T] = DoQueue(Seq.empty[T], Seq.empty[T])
 }

@@ -1,5 +1,8 @@
 package game_logic.item
 
+import system.logger.Logger
+import system.logger.Logger.log
+
 /** NOTE: Important to note an entryNum is the number a note appears
   *   as to the user, index is the number a note appears in the Seq.
   *   entryNum = index + 1
@@ -17,22 +20,24 @@ case class Notebook(notes: Seq[String]) {
 
   //TODO: test
   def removeNotes(entryNumsToRemove: Int*): Notebook = {
-    println(
-      s"DEBUG: in Notebook.removeNotes with ${entryNumsToRemove} and before - $this")
+    log(
+      s"in Notebook.removeNotes with ${entryNumsToRemove} and before - $this",
+      Logger.DEBUG)
     val (outcome: Notebook, _) = {
       entryNumsToRemove.foldLeft((this, 0)) {
         case ((current, loopNum), entryNum) =>
-          println(s"DEBUG: in notebook loop with $current and $entryNum")
+          log(s"in notebook loop with $current and $entryNum")
           (current.removeNote(entryNum - loopNum), loopNum + 1)
       }
     }
-    println(
-      s"DEBUG: in Notebook.removeNotes with ${entryNumsToRemove} and after - $outcome")
+    log(
+      s"in Notebook.removeNotes with ${entryNumsToRemove} and after - $outcome",
+      Logger.DEBUG)
     outcome
   }
 
   def removeNote(entryNumToRemove: Int): Notebook = {
-    println(s"DEBUG: in notebook remove note with $entryNumToRemove")
+    log(s"in notebook remove note with $entryNumToRemove", Logger.DEBUG)
     val removed = notes.patch(entryNumToIndex(entryNumToRemove), Nil, 1)
     this.copy(notes = removed)
   }

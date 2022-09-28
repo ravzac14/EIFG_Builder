@@ -1,0 +1,3 @@
+formatting freeform shouldn't record the formatted line in notebook
+DateTime(0,0,0,0...0) fails an assert in addMillis
+title cards don't timeout on their own, only on input

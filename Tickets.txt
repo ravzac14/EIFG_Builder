@@ -1,0 +1,23 @@
+Ongoing; make new default commands
+Ongoing; git grep TODO
+Be able to set logger level in config or something
+Test undo/redo
+Maybe; Parse in DefaultCommands
+Quick time event? Is that illegal? If so can be done using gametime
+Combat event?
+Be able to control window size, and moreover console size
+* Use JLine or something like it
+* also use JLine to read how many lines are left so that we can prompt to continue scrolling
+Title card sequence
+Menu formatting should be looked at. Including printing the "art" to the edges of the console
+Implement default commands for menu loops (such as "Back")
+Implement saves, choosing save location or default to certain spot based on game/OS
+implement read additional input loop, Add prompts Y/N for things such as...
+Make prompt and menu loops use generic params, or make generic params include the DI'd stuff
+sort out the StateBundle, maybe by which we should serialize, which can be rebuild from config,
+    and which are tools
+assess where the main game state should be used
+figure out how to only pass part of the state bundle and still retain the rest.
+    Is it worth serializing and then re-reading?
+Read a title sequence from config
+Console.pauseUntilInterrupt - implement

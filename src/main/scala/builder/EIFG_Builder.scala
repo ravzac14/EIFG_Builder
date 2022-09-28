@@ -1,32 +1,47 @@
 package builder
 
-import game_logic.character.CharacterState
-import game_logic.global._
-import game_logic.item.Notebook
+import base.DateTime
+import game_logic.global.game_loop.{
+  BaseGameLoop,
+  GameLoopParams,
+  MainGameLoopState
+}
+import game_logic.global.GameConfig
+import game_logic.global.game_loop.menus.MainMenuLoop
+import game_logic.global.game_loop.title_sequences.BaseTitleSequenceLoop
 import ui.console.{ ConsoleConfig, StdOutConsole }
+import ui.title_sequence.TitleSequenceHelpers
 
+import scala.annotation.tailrec
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
+//import scala.tools.jline_embedded.{ Terminal, TerminalFactory }
 
 object EIFG_Builder extends App {
   implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.global
 
-  def looper(gameLoop: GameLoop): GameLoop = {
+  @tailrec
+  def looper[T <: GameLoopParams](
+      gameLoop: BaseGameLoop[T]): BaseGameLoop[T] = {
     val newLoop = gameLoop.run
     looper(newLoop)
   }
 
-//  val mainMenuTree = MenuHelpers.buildDefaultMainMenu(
-//    gameTitle = "The Butt Game",
-//    initialGameLoop = Defaults.startGameLoop,
-//    exitGameLoop = Defaults.exitGameLoop)
   val consoleConfig =
-    ConsoleConfig(writePrefix = Some("\n"), readPrefix = Some("\n\n> "))
+    ConsoleConfig(writePrefix = Some("\n"), readPrefix = Some("> "))
   val console = new StdOutConsole(consoleConfig)
-  val gameState = GameState(CharacterState(Notebook.empty, ()))
-  val deps = State(gameState, console, timeout = 30.seconds)
-  val initialLoop = LoopDeLoop(deps)
+  val gameConfig =
+    GameConfig.empty(
+      gameTurnsPerMinute = 1,
+      startingGameTime = DateTime(year = 2022, month = 8, day = 12))
+  val state = MainGameLoopState.empty(console, timeout = 30.seconds, gameConfig)
+  val secondLoop = new MainMenuLoop(state)
+  val openingTitleSequence =
+    TitleSequenceHelpers.buildTitleSequence(
+      cardArts = Seq("First Card.", "Second Card.", "Third Card."),
+      ultimateLoop = secondLoop,
+      cardTimer = 5.seconds)
+  val initialLoop = BaseTitleSequenceLoop(state, openingTitleSequence)
 
-  console.writeUntyped("Welcome.")
   looper(initialLoop)
 }

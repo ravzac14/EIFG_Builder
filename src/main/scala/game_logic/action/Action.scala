@@ -3,7 +3,7 @@ package game_logic.action
 import base.Utils._
 import base.data_structures.Meta
 import base.types.ActionTakerId
-import game_logic.global.ActionManager
+import game_logic.global.managers.ActionManager
 
 trait Action {
   val name: String
