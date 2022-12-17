@@ -1,9 +1,10 @@
 package commands.outcomes
 
 import commands.types.BaseCommand
-import game_logic.global.GameState
-import game_logic.global.game_loop.{ GameLoopParams, MainGameLoopState }
+import game_logic.global.game_loop.MainGameLoopParams
 import game_logic.global.game_loop.prompts.BasePromptLoop
+import game_logic.global.managers.GameWorldManager.GameWorldUpdate
+import game_logic.global.managers.PlayerManager.PlayerUpdate
 import ui.console.Console
 
 import scala.util.Try
@@ -29,26 +30,21 @@ case class ConsoleSpecialOutcome(
     extends CommandOutcome
 
 case class ConsoleReadMoreInfoOutcome(
-    promptLoop: BasePromptLoop[MainGameLoopState],
+    promptLoop: BasePromptLoop[MainGameLoopParams],
     commander: BaseCommand,
     atSystemTime: Long)
     extends CommandOutcome
 
-case class UpdateGameStateOutcome(
+case class UpdateGameOutcome(
     maybeMessage: Option[String],
-    newGameState: GameState,
+    playerUpdates: Seq[PlayerUpdate],
+    worldUpdates: Seq[GameWorldUpdate],
     commander: BaseCommand,
-    atSystemTime: Long
-) extends CommandOutcome
-
-case class UndoCommandOutcome(
-    newGameState: GameState,
-    commander: BaseCommand,
-    atSystemTime: Long
-) extends CommandOutcome
-
-case class RedoCommandOutcome(
-    newGameState: GameState,
-    commander: BaseCommand,
-    atSystemTime: Long
-) extends CommandOutcome
+    atSystemTime: Long)
+    extends CommandOutcome
+//TODO
+//case class UndoCommandOutcome(commander: BaseCommand, atSystemTime: Long)
+//    extends CommandOutcome
+//
+//case class RedoCommandOutcome(commander: BaseCommand, atSystemTime: Long)
+//    extends CommandOutcome

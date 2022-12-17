@@ -14,10 +14,10 @@ case class BasePromptLoop[T <: GameLoopParams](
     timeout: Duration)(implicit ec: ExecutionContext)
     extends BaseGameLoop[T] {
 
-  override def setState(newState: T): BaseGameLoop[T] =
-    this.copy(previousGameLoop = previousGameLoop.setState(newState))
+  override def setParams(newState: T): BaseGameLoop[T] =
+    this.copy(previousGameLoop = previousGameLoop.setParams(newState))
 
-  override def getState: T = previousGameLoop.getState
+  override def getParams: T = previousGameLoop.getParams
 
   override def run: BaseGameLoop[T] = {
     val resultNewLoop = {

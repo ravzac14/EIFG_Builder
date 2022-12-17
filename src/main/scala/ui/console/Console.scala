@@ -1,6 +1,5 @@
 package ui.console
 
-import scala.concurrent.{ ExecutionContext, Future }
 import scala.concurrent.duration.Duration
 import scala.util.Try
 
@@ -11,13 +10,13 @@ trait Console {
   def writeTyped[T](out: T)(implicit conversion: T => String): Try[Unit] =
     writeUntyped(conversion(out))
 
-  def readUntyped(): Try[String]
+  def readUntyped(overridePrefix: Option[String] = None): Try[String]
 
-  def readTyped[T](implicit conversion: String => T): Try[T] =
-    readUntyped().flatMap(in => Try(conversion(in)))
+  def readTyped[T](overridePrefix: Option[String] = None)(implicit
+      conversion: String => T): Try[T] =
+    readUntyped(overridePrefix).flatMap(in => Try(conversion(in)))
 
   def clear(): Try[Unit]
 
-  def waitForInterrupt(n: Duration)(implicit
-      ec: ExecutionContext): Try[Option[String]]
+  def waitForInterrupt(n: Duration): Option[String]
 }

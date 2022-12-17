@@ -1,9 +1,8 @@
 package ui.console
 
-import scala.concurrent.{ Await, ExecutionContext, Future, Promise }
 import scala.concurrent.duration.Duration
 import scala.io.StdIn
-import scala.util.{ Failure, Success, Try }
+import scala.util.{ Success, Try }
 
 class StdOutConsole(config: ConsoleConfig) extends Console {
   override def writeUntyped(out: String): Try[Unit] = {
@@ -12,9 +11,13 @@ class StdOutConsole(config: ConsoleConfig) extends Console {
     Success(println(outForConsole))
   }
 
-  override def readUntyped(): Try[String] = {
+  override def readUntyped(
+      overridePrefix: Option[String] = None): Try[String] = {
     def read: String =
-      config.readPrefix.map(StdIn.readLine(_)).getOrElse(StdIn.readLine())
+      overridePrefix
+        .orElse(config.readPrefix)
+        .map(StdIn.readLine(_))
+        .getOrElse(StdIn.readLine())
     Try(read)
   }
 
@@ -25,18 +28,7 @@ class StdOutConsole(config: ConsoleConfig) extends Console {
     }
   }
 
-  override def waitForInterrupt(n: Duration)(implicit
-      ec: ExecutionContext): Try[Option[String]] = {
-    val p = Promise[Option[String]]()
-    val f = p.future
-
-    val resultFuture = Future.fromTry(readUntyped())
-    resultFuture.onComplete {
-      case Success(result) => p.success(Some(result))
-      case Failure(ex)     => p.failure(ex)
-    }
-    Try(Await.result(f, n)).recoverWith { case _: concurrent.TimeoutException =>
-      Success(None)
-    }
-  }
+  override def waitForInterrupt(n: Duration): Option[String] =
+    throw new UnsupportedOperationException(
+      "StdOutConsole does not support time-based input reads")
 }

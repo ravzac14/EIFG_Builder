@@ -8,7 +8,7 @@ import commands.Exceptions.{
   UnknownInputException
 }
 import game_logic.global.GameState
-import game_logic.global.game_loop.{ BaseGameLoop, MainGameLoopState }
+import game_logic.global.game_loop.{ BaseGameLoop, MainGameLoopParams }
 import system.logger.Logger
 import system.logger.Logger.log
 import ui.console.Console
@@ -118,8 +118,7 @@ object CommandHelpers {
   // being able to generate helper scala files and stuff, for parse method for example.
   def parseLineAsCommand(
       line: String,
-      state: MainGameLoopState,
-      previousGameLoop: BaseGameLoop[MainGameLoopState],
+      previousGameLoop: BaseGameLoop[MainGameLoopParams],
       console: Console,
       timeout: Duration,
       customCommands: Seq[BaseCommand] = Seq.empty,
@@ -155,7 +154,7 @@ object CommandHelpers {
         asCommand(
           AddNote(
             rest.mkString(CommandWordDelim),
-            state.gameState,
+            previousGameLoop.getParams.gameManager.playerManager.characterState.notebook,
             atSystemTime))
       case Seq(firstInput, secondInput, rest @ _*)
           if AddNote.matches(Seq(firstInput, secondInput)) &&
@@ -163,7 +162,7 @@ object CommandHelpers {
         asCommand(
           AddNote(
             rest.mkString(CommandWordDelim),
-            state.gameState,
+            previousGameLoop.getParams.gameManager.playerManager.characterState.notebook,
             atSystemTime))
       case whole if AddNote.matches(formatSeqAsCommand(whole)) =>
         Failure(new MissingInputException(whole, AddNote))
@@ -174,7 +173,7 @@ object CommandHelpers {
             RemoveNote
               .validateInput(rest)
               .isSuccess =>
-        asCommand(RemoveNote(rest.map(_.toInt), state.gameState, atSystemTime))
+        asCommand(RemoveNote(rest.map(_.toInt), atSystemTime))
       case whole if RemoveNote.matches(formatSeqAsCommand(whole)) =>
         Failure(new MissingInputException(whole, RemoveNote))
 
@@ -182,26 +181,37 @@ object CommandHelpers {
       case whole
           if ReadNotebook.matches(whole) &&
             (whole.length == 1 || whole.length == 2) =>
-        asCommand(ReadNotebook(state.gameState, atSystemTime))
+        asCommand(
+          ReadNotebook(
+            previousGameLoop.getParams.gameManager.playerManager.characterState.notebook,
+            atSystemTime))
       case whole if ReadNotebook.matches(whole) =>
         Failure(new PartialCommandMatchException(whole, ReadNotebook))
 
       // Command History
       case Seq(singleInput) if CommandHistory.matches(singleInput) =>
-        asCommand(CommandHistory(state, atSystemTime))
+        asCommand(CommandHistory(previousGameLoop.getParams, atSystemTime))
       case Seq(singleInput, rest @ _*)
           if rest.nonEmpty &&
             CommandHistory.matches(singleInput) &&
             !CommandHistory.matches(Seq(singleInput, rest.head)) &&
             CommandHistory.validateInput(rest).isSuccess =>
-        asCommand(CommandHistory(state, atSystemTime, Some(rest.head)))
+        asCommand(
+          CommandHistory(
+            previousGameLoop.getParams,
+            atSystemTime,
+            Some(rest.head)))
       case Seq(firstInput, secondInput)
           if CommandHistory.matches(Seq(firstInput, secondInput)) =>
-        asCommand(CommandHistory(state, atSystemTime))
+        asCommand(CommandHistory(previousGameLoop.getParams, atSystemTime))
       case Seq(firstInput, secondInput, rest @ _*)
           if CommandHistory.matches(Seq(firstInput, secondInput)) &&
             CommandHistory.validateInput(rest).isSuccess =>
-        asCommand(CommandHistory(state, atSystemTime, Some(rest.head)))
+        asCommand(
+          CommandHistory(
+            previousGameLoop.getParams,
+            atSystemTime,
+            Some(rest.head)))
       case whole if CommandHistory.matches(formatSeqAsCommand(whole)) =>
         Failure(new MissingInputException(whole, CommandHistory))
 

@@ -7,13 +7,12 @@ import game_logic.stats.SavingThrowStat.SavingThrowStat
 import game_logic.stats.{ StatDescriptor, Stats, Buff }
 
 case class Character(
-    val name: String = "Steve",
-    val description: String = "",
-    val age: Int = 23,
-    val disposition: Disposition = Disposition.Neutral,
-    val buffs: Set[Buff] = Set(),
-    val inventory: Set[Item] = Set()
-) {
+    name: String = "Steve",
+    description: String = "",
+    age: Int = 23,
+    disposition: Disposition = Disposition.Neutral,
+    buffs: Set[Buff] = Set(),
+    inventory: Set[Item] = Set()) {
   def setName(n: String) = copy(name = n)
   def setDescription(d: String) = copy(description = d)
   def appendDescription(d: String) =

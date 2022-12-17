@@ -25,8 +25,8 @@ case class BaseMenuLoop[T <: GameLoopParams](menuParams: T, menu: MenuTree[T])(
     Await.result(futureLoopWithNewMenu, runTimeout)
   }
 
-  override def setState(newState: T): BaseGameLoop[T] =
+  override def setParams(newState: T): BaseGameLoop[T] =
     this.copy(menuParams = newState)
 
-  override def getState: T = menuParams
+  override def getParams: T = menuParams
 }

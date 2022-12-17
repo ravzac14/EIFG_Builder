@@ -8,10 +8,11 @@ trait GameLoopParams {
   val console: Console
   val runTimeout: Duration
 }
+
 trait BaseGameLoop[T <: GameLoopParams] {
   def run: BaseGameLoop[T]
-  def setState(newState: T): BaseGameLoop[T]
-  def updateState(transform: T => T): BaseGameLoop[T] = setState(
-    transform(getState))
-  def getState: T
+  def setParams(newParams: T): BaseGameLoop[T]
+  def updateParams(transform: T => T): BaseGameLoop[T] = setParams(
+    transform(getParams))
+  def getParams: T
 }

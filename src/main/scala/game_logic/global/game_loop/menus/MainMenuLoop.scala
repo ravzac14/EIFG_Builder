@@ -4,24 +4,24 @@ import game_logic.global.game_loop.menus.MainMenuLoop.mainMenuTree
 import game_logic.global.game_loop.{
   ExitGameLoop,
   MainGameLoop,
-  MainGameLoopState
+  MainGameLoopParams
 }
 import ui.menu.{ MenuHelpers, MenuTree }
 
 import scala.concurrent.ExecutionContext
 
-class MainMenuLoop(mainGameLoopState: MainGameLoopState)(implicit
-    ec: ExecutionContext)
-    extends BaseMenuLoop[MainGameLoopState](
+class MainMenuLoop(mainGameLoopState: MainGameLoopParams)(implicit
+                                                          ec: ExecutionContext)
+    extends BaseMenuLoop[MainGameLoopParams](
       mainGameLoopState,
       mainMenuTree(mainGameLoopState))
 
 object MainMenuLoop {
 
-  def mainMenuTree(state: MainGameLoopState)(implicit
-      ec: ExecutionContext): MenuTree[MainGameLoopState] =
+  def mainMenuTree(state: MainGameLoopParams)(implicit
+                                              ec: ExecutionContext): MenuTree[MainGameLoopParams] =
     MenuHelpers.buildDefaultMainMenu(
       gameTitle = "Test Game",
       initialGameLoop = MainGameLoop(state),
-      exitGameLoop = ExitGameLoop[MainGameLoopState](state))
+      exitGameLoop = ExitGameLoop[MainGameLoopParams](state))
 }

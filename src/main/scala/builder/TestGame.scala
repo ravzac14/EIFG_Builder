@@ -1,24 +1,32 @@
 package builder
 
 import base.DateTime
+import game_logic.character.{ Actor, CharacterState }
 import game_logic.global.game_loop.{
   BaseGameLoop,
   GameLoopParams,
-  MainGameLoopState
+  MainGameLoopParams
 }
-import game_logic.global.GameConfig
+import game_logic.global.{ GameConfig, GameState }
 import game_logic.global.game_loop.menus.MainMenuLoop
 import game_logic.global.game_loop.title_sequences.BaseTitleSequenceLoop
+import game_logic.global.managers.{
+  GameManager,
+  GameWorldManager,
+  PlayerManager
+}
+import game_logic.location.GameWorld
 import ui.console.{ ConsoleConfig, StdOutConsole }
 import ui.title_sequence.TitleSequenceHelpers
 
 import scala.annotation.tailrec
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
-//import scala.tools.jline_embedded.{ Terminal, TerminalFactory }
 
-object EIFG_Builder extends App {
+object TestGame extends App {
   implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.global
+
+  val TestWorld: GameWorld = ???
 
   @tailrec
   def looper[T <: GameLoopParams](
@@ -33,8 +41,17 @@ object EIFG_Builder extends App {
   val gameConfig =
     GameConfig.empty(
       gameTurnsPerMinute = 1,
-      startingGameTime = DateTime(year = 2022, month = 8, day = 12))
-  val state = MainGameLoopState.empty(console, timeout = 30.seconds, gameConfig)
+      startingGameTime = DateTime(year = 1990, month = 1, day = 1))
+  val player = new Actor()
+  val world = TestWorld
+  val gameManager =
+    GameManager(
+      GameState.empty(startingDateTime = gameConfig.startingGameTime),
+      PlayerManager(player, CharacterState.empty),
+      GameWorldManager(world),
+      gameConfig)
+  val state =
+    MainGameLoopParams.empty(console, timeout = 30.seconds, gameManager)
   val secondLoop = new MainMenuLoop(state)
   val openingTitleSequence =
     TitleSequenceHelpers.buildTitleSequence(

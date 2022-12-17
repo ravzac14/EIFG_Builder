@@ -4,8 +4,8 @@ package game_logic.global.game_loop
 case class ExitGameLoop[T <: GameLoopParams](state: T) extends BaseGameLoop[T] {
   override def run: BaseGameLoop[T] = { System.exit(0); this }
 
-  override def setState(newState: T): BaseGameLoop[T] =
-    this.setState(newState)
+  override def setParams(newState: T): BaseGameLoop[T] =
+    this.setParams(newState)
 
-  override def getState: T = state
+  override def getParams: T = state
 }

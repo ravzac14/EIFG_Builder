@@ -7,7 +7,7 @@ import commands.outcomes.{
   ConsoleSpecialOutcome,
   ConsoleWriteOutcome,
   UnitOutcome,
-  UpdateGameStateOutcome
+  UpdateGameOutcome
 }
 import commands.types.{
   BaseCommand,
@@ -21,9 +21,11 @@ import game_logic.global.GameState
 import game_logic.global.game_loop.{
   BaseGameLoop,
   GameLoopParams,
-  MainGameLoopState
+  MainGameLoopParams
 }
 import game_logic.global.game_loop.prompts.ExitToMenuLoop
+import game_logic.global.managers.PlayerManager
+import game_logic.item.Notebook
 import system.logger.Logger
 import system.logger.Logger.log
 import ui.console.Console
@@ -77,7 +79,7 @@ object DefaultCommands {
   }
 
   case class Exit(
-      previousGameLoop: BaseGameLoop[MainGameLoopState],
+      previousGameLoop: BaseGameLoop[MainGameLoopParams],
       console: Console,
       timeout: Duration,
       atSystemTime: Long)(implicit ec: ExecutionContext)
@@ -102,21 +104,19 @@ object DefaultCommands {
     def tooltip: Option[String] = Some("Exits the program.")
   }
 
-  case class AddNote(newNote: String, gameState: GameState, atSystemTime: Long)
+  case class AddNote(
+      newNote: String,
+      playerNotebook: Notebook,
+      atSystemTime: Long)
       extends DefaultCommand {
     def meta: CommandMeta = AddNote
 
     def action: Future[CommandOutcome] = fSucc {
-      val updatedState =
-        gameState.copy(
-          characterState = gameState.characterState.copy(
-            notebook = gameState.characterState.notebook.addNotes(newNote)
-          )
-        )
-      UpdateGameStateOutcome(
-        maybeMessage = Some(
-          s"Note added as entry number [${gameState.characterState.notebook.size + 1}]."),
-        newGameState = updatedState,
+      UpdateGameOutcome(
+        maybeMessage =
+          Some(s"Note added as entry number [${playerNotebook.size + 1}]."),
+        playerUpdates = Seq(PlayerManager.AddNote(newNote)),
+        worldUpdates = Seq.empty, // TODO
         commander = this,
         atSystemTime = atSystemTime
       )
@@ -141,24 +141,15 @@ object DefaultCommands {
   }
 
   // TODO: Add prompt to confirm removal
-  case class RemoveNote(
-      entryNum: Seq[Int],
-      gameState: GameState,
-      atSystemTime: Long)
+  case class RemoveNote(entryNum: Seq[Int], atSystemTime: Long)
       extends DefaultCommand {
     def meta: CommandMeta = RemoveNote
 
     def action: Future[CommandOutcome] = fSucc {
-      val updatedState =
-        gameState.copy(
-          characterState = gameState.characterState.copy(
-            notebook =
-              gameState.characterState.notebook.removeNotes(entryNum: _*)
-          )
-        )
-      UpdateGameStateOutcome(
+      UpdateGameOutcome(
         maybeMessage = Some(s"Removed entries ${entryNum.mkString(" and ")}"),
-        newGameState = updatedState,
+        playerUpdates = Seq(PlayerManager.RemoveNote(entryNum: _*)),
+        worldUpdates = Seq.empty, // TODO
         commander = this,
         atSystemTime = atSystemTime
       )
@@ -180,12 +171,12 @@ object DefaultCommands {
       } yield ()
   }
 
-  case class ReadNotebook(gameState: GameState, atSystemTime: Long)
+  case class ReadNotebook(playerNotebook: Notebook, atSystemTime: Long)
       extends DefaultCommand {
     def meta: CommandMeta = ReadNotebook
 
     def action: Future[CommandOutcome] = fSucc {
-      val output = gameState.characterState.notebook.forOutput()
+      val output = playerNotebook.forOutput()
       ConsoleWriteOutcome(output, this, atSystemTime)
     }
   }
@@ -203,7 +194,7 @@ object DefaultCommands {
   }
 
   case class CommandHistory(
-      state: MainGameLoopState,
+      params: MainGameLoopParams,
       atSystemTime: Long,
       maybeDepthStr: Option[String] = None)
       extends DefaultCommand {
@@ -212,7 +203,7 @@ object DefaultCommands {
     def meta: CommandMeta = CommandHistory
 
     def action: Future[CommandOutcome] = fSucc {
-      val relevantCommandElements = state.commandHistory(depthNum)
+      val relevantCommandElements = params.commandHistory(depthNum)
       val asTuples = {
         ("Turn Number", "Command") +:
           relevantCommandElements.map(a =>
