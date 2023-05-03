@@ -5,8 +5,6 @@ import commands.CommandHelpers
 import commands.outcomes.{
   CommandOutcome,
   ConsoleReadMoreInfoOutcome,
-  ConsoleSpecialOutcome,
-  ConsoleWriteOutcome,
   UnitOutcome,
   UpdateGameOutcome
 }
@@ -26,11 +24,12 @@ import game_logic.global.managers.GameWorldManager.GameWorldUpdate
 import game_logic.global.managers.PlayerManager.PlayerUpdate
 import system.logger.Logger
 import system.logger.Logger.log
+import ui.console.Console
 
 import scala.concurrent.{ Await, ExecutionContext, Future }
 import scala.util.Try
 
-case class MainGameLoop(params: MainGameLoopParams)(implicit
+case class GameplayLoop(params: MainGameLoopParams)(implicit
     ec: ExecutionContext)
     extends BaseGameLoop[MainGameLoopParams] {
   import params._
@@ -65,28 +64,13 @@ case class MainGameLoop(params: MainGameLoopParams)(implicit
     turnUpdates ++ timeUpdates
   }
 
-  private def getPlayerUpdates(): Seq[PlayerUpdate] = ???
-
-  private def getWorldUpdates(): Seq[GameWorldUpdate] = ???
-
-  /** TODO remove
-    * Should delegate the game outcomes of the command to the game manager/state,
-    *   ie how the game world changes, how the player changes
-    * the built in functions/side effects of the commands to the tools/state,
-    *   ie manipulating the command queue, IO, serialization?
-    *
-    *   TODO WHERE YOU LEFT OFF
-    *     REFACTORING THIS TO PASS THE StateUpdates to the GameManager,
-    *     and then going on to make PlayerUpdates and WorldUpdates from
-    *     the various commands
-    */
-
-  case class CommandEffects(
+  private case class CommandEffects(
       maybeNewGameLoop: Option[BaseGameLoop[MainGameLoopParams]],
       paramUpdates: Seq[ParamUpdate],
       stateUpdates: Seq[StateUpdate],
       playerUpdates: Seq[PlayerUpdate],
-      worldUpdates: Seq[GameWorldUpdate])
+      worldUpdates: Seq[GameWorldUpdate],
+      postUpdateConsoleActions: Seq[Console => Try[Unit]])
 
   private def processCommand(
       outcome: CommandOutcome,
@@ -101,43 +85,51 @@ case class MainGameLoop(params: MainGameLoopParams)(implicit
         turnNum = -1, // Unset, will get updated later
         atSystemTime = outcome.atSystemTime,
         atGameTime = gameTimeAfterCommand)
-    val baseParamUpdates = getParamUpdates(action)
+    val paramUpdates = getParamUpdates(action)
     val stateUpdates = getStateUpdates(action, maybeTimeForState)
+    val preUpdateConsoleActionsResult = Future.sequence {
+      outcome.preUpdateConsoleActions.map(f => Future.fromTry(f(console)))
+    }
 
-    val partialResult: Future[(
-        Option[BaseGameLoop[MainGameLoopParams]],
-        Seq[PlayerUpdate],
-        Seq[GameWorldUpdate])] =
-      outcome match {
-        case UnitOutcome(_, _) =>
-          Future.successful((None, Seq.empty, Seq.empty))
+    val effects = outcome match {
+      case UnitOutcome(_, _, _, postUpdateConsoleActions) =>
+        CommandEffects(
+          None,
+          paramUpdates,
+          stateUpdates,
+          Seq.empty,
+          Seq.empty,
+          postUpdateConsoleActions)
 
-        case ConsoleReadMoreInfoOutcome(prompt, _, _) =>
-          Future.successful((Some(prompt), Seq.empty, Seq.empty))
+      case ConsoleReadMoreInfoOutcome(
+            promptLoop,
+            _,
+            _,
+            _,
+            postUpdateConsoleActions) =>
+        CommandEffects(
+          Some(promptLoop),
+          paramUpdates,
+          stateUpdates,
+          Seq.empty,
+          Seq.empty,
+          postUpdateConsoleActions)
 
-        case ConsoleWriteOutcome(message, _, _) =>
-          Future
-            .fromTry(console.writeUntyped(message))
-            .map(_ => (None, Seq.empty, Seq.empty))
-
-        case ConsoleSpecialOutcome(f, _, _) =>
-          Future
-            .fromTry(f(console))
-            .map(_ => (None, Seq.empty, Seq.empty))
-
-        case UpdateGameOutcome(
-              maybeMessage,
-              playerUpdates,
-              worldUpdates,
-              _,
-              _) =>
-          for {
-            _ <- Future.sequence {
-              maybeMessage.toSeq.map { m =>
-                Future.fromTry(console.writeUntyped(m))
-              }
-            }
-          } yield (None, playerUpdates, worldUpdates)
+      case UpdateGameOutcome(
+            playerUpdates,
+            worldUpdates,
+            _,
+            _,
+            _,
+            postUpdateConsoleActions) =>
+        CommandEffects(
+          None,
+          paramUpdates,
+          stateUpdates,
+          playerUpdates,
+          worldUpdates,
+          postUpdateConsoleActions)
+    }
 
 // TODO add or remove undo/redo
 //        case UndoCommandOutcome(_, _) =>
@@ -161,16 +153,8 @@ case class MainGameLoop(params: MainGameLoopParams)(implicit
 //                .updateGameTime(oldTime)
 //            }
 //          }
-      }
 
-    partialResult.map { case (newLoop, playerUpdates, worldUpdates) =>
-      CommandEffects(
-        maybeNewGameLoop = newLoop,
-        paramUpdates = baseParamUpdates,
-        stateUpdates = stateUpdates,
-        playerUpdates = playerUpdates,
-        worldUpdates = worldUpdates)
-    }
+    preUpdateConsoleActionsResult.map(_ => effects)
   }
 
   def run: BaseGameLoop[MainGameLoopParams] = {
@@ -201,15 +185,13 @@ case class MainGameLoop(params: MainGameLoopParams)(implicit
             commandEffects.worldUpdates,
             commandEffects.playerUpdates)
         }
+        _ <- Future.sequence {
+          commandEffects.postUpdateConsoleActions.map { f =>
+            Future.fromTry(f(console))
+          }
+        }
         newLoop = commandEffects.maybeNewGameLoop.getOrElse(this)
       } yield newLoop.setParams(newParams)
     Await.result(futureLoopWithNewState, runTimeout)
   }
-}
-
-object MainGameLoop {
-
-  case class LoopUpdate[T <: GameLoopParams](
-      newLoop: BaseGameLoop[T],
-      current: BaseGameLoop[T])
 }

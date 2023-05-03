@@ -19,10 +19,6 @@ package parser.models
   *             A [[RoomIn]] may have any number of [[PortalIn]]s (in the [[RoomIn.portals]] array field)
   *             which each lead to another [[RoomIn]].
   *
-  *             A [[RoomIn]] may have any number of [[ZoneIn]]. Moving around the room would be moving
-  *             between [[ZoneIn]]s. IE. "You're standing in front of the old, brown bureau." If a [[RoomIn]]
-  *             has a single [[ZoneIn]] or no [[ZoneIn]], we use the [[RoomIn]] description.
-  *
   *             A [[RoomIn]] can optionally include a [[Size]] (in the [[RoomIn.size]] field), this will make
   *             the game engine's distance and time based calculations accurate, but is not needed
   *             especially if you choose not to make those statistics available to the Player.
@@ -34,5 +30,4 @@ case class RoomIn(
     // TODO: decide if size is gonna be parsed directly from my sealed trait or some other
     // enum, perhaps can use a number value too?
 //    size: Size = Room.Medium(),
-    portals: Seq[PortalIn] = Seq.empty,
-    zones: Seq[ZoneIn] = Seq.empty)
+    portals: Seq[PortalIn] = Seq.empty)

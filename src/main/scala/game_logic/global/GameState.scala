@@ -1,7 +1,6 @@
 package game_logic.global
 
 import base.DateTime
-import game_logic.character.CharacterState
 
 case class GameState(
     // Turn only go up, time can move in either direction

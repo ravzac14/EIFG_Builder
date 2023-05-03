@@ -10,9 +10,9 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.Duration
 
 class ExitToMenuLoop(
-                      previousGameLoop: BaseGameLoop[MainGameLoopParams],
-                      console: Console,
-                      timeout: Duration)(implicit ec: ExecutionContext)
+    previousGameLoop: BaseGameLoop[MainGameLoopParams],
+    console: Console,
+    timeout: Duration)(implicit ec: ExecutionContext)
     extends BasePromptLoop[MainGameLoopParams](
       exitToMenuPromptTree(previousGameLoop),
       previousGameLoop,

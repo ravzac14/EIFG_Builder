@@ -1,20 +1,15 @@
 package game_logic.global.game_loop
 
-import base.DateTime
 import base.data_structures.DoQueue
 import game_logic.global.game_loop.MainGameLoopParams.{
   AddToQueue,
   ParamUpdate
 }
 import game_logic.global.managers.GameManager
-import game_logic.global.managers.GameManager.{
-  StateUpdate,
-  UpdateGameTime,
-  UpdateTurn
-}
+import game_logic.global.managers.GameManager.StateUpdate
 import game_logic.global.managers.GameWorldManager.GameWorldUpdate
 import game_logic.global.managers.PlayerManager.PlayerUpdate
-import game_logic.global.{ GameConfig, GameState, PlayerCommand }
+import game_logic.global.PlayerCommand
 import ui.console.Console
 
 import scala.concurrent.duration.Duration
@@ -24,7 +19,7 @@ case class MainGameLoopParams(
     gameManager: GameManager,
     private val commandQueue: DoQueue[PlayerCommand],
     console: Console,
-    runTimeout: Duration)
+    runTimeout: Duration = Duration.Inf)
     extends GameLoopParams {
 
   def lastCommand(): Option[PlayerCommand] = commandQueue.peak()
@@ -36,9 +31,6 @@ case class MainGameLoopParams(
       .map(i => commandQueue.queue.take(i))
       .getOrElse(commandQueue.queue)
 
-  // WHAT WAS I DOING
-  // removing the copy pasta, and making this update the internal fields
-  // and then calling it in the main game loop
   def update(
       paramUpdates: Seq[ParamUpdate],
       stateUpdates: Seq[StateUpdate],

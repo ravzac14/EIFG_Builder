@@ -28,47 +28,47 @@ import game_logic.stats.StatDescriptor.StatDescriptor
   * @param proficientSkills - Which skills you're especially good at
   */
 case class Stats(
-    val health: DescriptiveStat = new DescriptiveStat(100),
-    val stamina: DescriptiveStat = new DescriptiveStat(100),
-    val armorMultiplier: Float = 1.0f,
-    val mana: DescriptiveStat = new DescriptiveStat(100),
-    val experience: Int = 1,
-    val strength: ModifierStat = new ModifierStat(10),
-    val dexterity: ModifierStat = new ModifierStat(10),
-    val constitution: ModifierStat = new ModifierStat(10),
-    val intelligence: ModifierStat = new ModifierStat(10),
-    val wisdom: ModifierStat = new ModifierStat(10),
-    val charisma: ModifierStat = new ModifierStat(10),
-    val proficientSavingThrows: Set[SavingThrowStat] = Set(),
-    val proficientSkills: Set[ProficientStat] = Set()
-) {
-  def modifyHealth(v: Int) =
+    health: DescriptiveStat = new DescriptiveStat(100),
+    stamina: DescriptiveStat = new DescriptiveStat(100),
+    armorMultiplier: Float = 1.0f,
+    mana: DescriptiveStat = new DescriptiveStat(100),
+    experience: Int = 0,
+    strength: ModifierStat = new ModifierStat(10),
+    dexterity: ModifierStat = new ModifierStat(10),
+    constitution: ModifierStat = new ModifierStat(10),
+    intelligence: ModifierStat = new ModifierStat(10),
+    wisdom: ModifierStat = new ModifierStat(10),
+    charisma: ModifierStat = new ModifierStat(10),
+    proficientSavingThrows: Set[SavingThrowStat] = Set(),
+    proficientSkills: Set[ProficientStat] = Set()) {
+  def modifyHealth(v: Int): Stats =
     copy(health = new DescriptiveStat(this.health.value + v))
-  def modifyStamina(v: Int) =
+  def modifyStamina(v: Int): Stats =
     copy(stamina = new DescriptiveStat(this.stamina.value + v))
-  def setArmorModifier(v: Float) = copy(armorMultiplier = v)
-  def modifyMana(v: Int) = copy(mana = new DescriptiveStat(this.mana.value + v))
-  def modifyExperience(v: Int) = copy(experience = this.experience + v)
-  def modifyStrength(v: Int) =
+  def setArmorModifier(v: Float): Stats = copy(armorMultiplier = v)
+  def modifyMana(v: Int): Stats =
+    copy(mana = new DescriptiveStat(this.mana.value + v))
+  def modifyExperience(v: Int): Stats = copy(experience = this.experience + v)
+  def modifyStrength(v: Int): Stats =
     copy(strength = new ModifierStat(this.strength.value + v))
-  def modifyDexterity(v: Int) =
+  def modifyDexterity(v: Int): Stats =
     copy(dexterity = new ModifierStat(this.dexterity.value + v))
-  def modifyConstitution(v: Int) =
+  def modifyConstitution(v: Int): Stats =
     copy(constitution = new ModifierStat(this.constitution.value + v))
-  def modifyIntelligence(v: Int) =
+  def modifyIntelligence(v: Int): Stats =
     copy(intelligence = new ModifierStat(this.intelligence.value + v))
-  def modifyWisdom(v: Int) =
+  def modifyWisdom(v: Int): Stats =
     copy(wisdom = new ModifierStat(this.wisdom.value + v))
-  def modifyCharisma(v: Int) =
+  def modifyCharisma(v: Int): Stats =
     copy(charisma = new ModifierStat(this.charisma.value + v))
 
-  def addProficientSavingThrow(s: SavingThrowStat) =
+  def addProficientSavingThrow(s: SavingThrowStat): Stats =
     copy(proficientSavingThrows = this.proficientSavingThrows + s)
-  def removeProficientSavingThrow(s: SavingThrowStat) =
+  def removeProficientSavingThrow(s: SavingThrowStat): Stats =
     copy(proficientSavingThrows = this.proficientSavingThrows - s)
-  def addProficientSkill(s: ProficientStat) =
+  def addProficientSkill(s: ProficientStat): Stats =
     copy(proficientSkills = this.proficientSkills + s)
-  def removeProficientSkill(s: ProficientStat) =
+  def removeProficientSkill(s: ProficientStat): Stats =
     copy(proficientSkills = this.proficientSkills - s)
 
   // TODO: This might be something based arbitrarily, not dnd stats

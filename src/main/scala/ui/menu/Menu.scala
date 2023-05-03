@@ -85,9 +85,9 @@ object MenuHelpers {
     * @param gameTitle - comes in as a computer readable string
     */
   def buildDefaultMainMenu(
-                            gameTitle: String,
-                            initialGameLoop: BaseGameLoop[MainGameLoopParams],
-                            exitGameLoop: BaseGameLoop[MainGameLoopParams]
+      gameTitle: String,
+      initialGameLoop: BaseGameLoop[MainGameLoopParams],
+      exitGameLoop: BaseGameLoop[MainGameLoopParams]
   ): MenuTree[MainGameLoopParams] = {
     // Screen 3: Settings
     val baseSettingsMenuScreen: MenuScreen[MainGameLoopParams] =

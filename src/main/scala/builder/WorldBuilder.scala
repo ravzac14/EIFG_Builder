@@ -1,7 +1,7 @@
 package builder
 
-import game_logic.location.{ GameWorld, Portal, Room, Zone }
-import parser.models.{ PortalIn, RoomIn, ZoneIn }
+import game_logic.location.{ GameWorld, Portal, Room }
+import parser.models.{ PortalIn, RoomIn }
 
 import scala.util.{ Failure, Try }
 
@@ -17,12 +17,6 @@ object WorldBuilder {
 
   def portalFromPortalIn(parentRoom: String, in: PortalIn): Portal = ???
 //    Portal(name = in.name)
-
-  def zoneFromZoneIn(in: ZoneIn): Zone = ???
-//    Zone(
-//      name = in.name,
-//      simpleDescription = in.simpleDescription,
-//      detailedDescription = in.detailedDescription)
 
   def roomFromRoomIn(in: RoomIn)(
       worldSoFar: GameWorld): Try[(GameWorld, Room)] = ??? //{

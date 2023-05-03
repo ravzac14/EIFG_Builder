@@ -28,3 +28,12 @@ GameConfig:
 ** timePassed
 Turn effects that happen when a Player takes a turn in a room or zone or something
 Add GameObjects to room/zones
+* Add "nearby items" to the description of a room or zone, ie when the player drops something
+Add weight considerations to items and inventory
+Support description shortcuts, ie if someone wants to have the Room description read out the description of a
+    bookcase so they don't have to write it twice.
+support informational commands, ie "Left doesn't work to move, please provide one of the directions: blah"
+    or something worded better
+movement commands
+parse certain input as one word (such as compound words)
+make initial loop out of menu print world desc

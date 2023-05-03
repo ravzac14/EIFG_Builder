@@ -40,4 +40,18 @@ object InputValidators {
         )
       )
     }
+
+  def isContainedBy(i: String, values: Seq[String])(
+      commandName: String): Try[Unit] =
+    if (values.contains(i)) {
+      Success(())
+    } else {
+      Failure(
+        new InvalidInputException(
+          name = commandName,
+          inputWords = Seq(i),
+          reason = "Given value not contained in given set"
+        )
+      )
+    }
 }

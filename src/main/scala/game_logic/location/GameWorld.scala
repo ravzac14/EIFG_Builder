@@ -2,7 +2,6 @@ package game_logic.location
 
 import game_logic.location.Portal.PortalId
 import game_logic.location.Room.RoomId
-import game_logic.location.Zone.ZoneId
 
 import scala.util.{ Failure, Success, Try }
 
@@ -47,36 +46,6 @@ case class GameWorld(name: String, rooms: Seq[Room], portals: Seq[Portal]) {
       Failure(new PortalNotFoundException(updated.meta.id))
     }
 
-  def zoneExists(id: ZoneId, parentId: RoomId): Boolean =
-    rooms.exists(r => r.meta.id == parentId && r.zones.exists(_.meta.id == id))
-
-  def getZone(id: ZoneId, parentId: RoomId): Try[Zone] =
-    rooms
-      .find(_.meta.id == parentId)
-      .flatMap(_.zones.find(_.meta.id == id))
-      .map(Success(_))
-      .getOrElse(Failure(new ZoneNotFoundException(id)))
-
-  def setZone(updated: Zone, parentId: RoomId): Try[GameWorld] =
-    if (roomExists(parentId)) {
-      if (zoneExists(updated.meta.id, parentId)) {
-        for {
-          existingRoom <- getRoom(parentId)
-          zonesWithout = existingRoom.zones.filterNot {
-            _.meta.id == updated.meta.id
-          }
-          updatedRoom = existingRoom.copy(zones = zonesWithout :+ updated)
-          existingRoomsWithout = rooms.filterNot {
-            _.meta.id == existingRoom.meta.id
-          }
-        } yield this.copy(rooms = existingRoomsWithout :+ updatedRoom)
-      } else {
-        Failure(new ZoneNotFoundException(updated.meta.id))
-      }
-    } else {
-      Failure(new RoomNotFoundException(parentId))
-    }
-
   // TODO: Print each room if visited
   def printVisitedMap: Unit = ???
 }
@@ -88,7 +57,4 @@ object GameWorld {
 
   class PortalNotFoundException(id: PortalId)
       extends Exception(s"Could not find portal with id [$id]")
-
-  class ZoneNotFoundException(id: ZoneId)
-      extends Exception(s"Could not find zone with id [$id]")
 }

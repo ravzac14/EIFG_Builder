@@ -12,35 +12,32 @@ import scala.util.Try
 sealed trait CommandOutcome {
   val atSystemTime: Long
   val commander: BaseCommand
+  val preUpdateConsoleActions: Seq[Console => Try[Unit]]
+  val postUpdateConsoleActions: Seq[Console => Try[Unit]]
 }
 
-case class UnitOutcome(commander: BaseCommand, atSystemTime: Long)
-    extends CommandOutcome
-
-case class ConsoleWriteOutcome(
-    message: String,
+case class UnitOutcome(
     commander: BaseCommand,
-    atSystemTime: Long)
-    extends CommandOutcome
-
-case class ConsoleSpecialOutcome(
-    f: Console => Try[Unit],
-    commander: BaseCommand,
-    atSystemTime: Long)
+    atSystemTime: Long,
+    preUpdateConsoleActions: Seq[Console => Try[Unit]] = Seq.empty,
+    postUpdateConsoleActions: Seq[Console => Try[Unit]] = Seq.empty)
     extends CommandOutcome
 
 case class ConsoleReadMoreInfoOutcome(
     promptLoop: BasePromptLoop[MainGameLoopParams],
     commander: BaseCommand,
-    atSystemTime: Long)
+    atSystemTime: Long,
+    preUpdateConsoleActions: Seq[Console => Try[Unit]] = Seq.empty,
+    postUpdateConsoleActions: Seq[Console => Try[Unit]] = Seq.empty)
     extends CommandOutcome
 
 case class UpdateGameOutcome(
-    maybeMessage: Option[String],
     playerUpdates: Seq[PlayerUpdate],
     worldUpdates: Seq[GameWorldUpdate],
     commander: BaseCommand,
-    atSystemTime: Long)
+    atSystemTime: Long,
+    preUpdateConsoleActions: Seq[Console => Try[Unit]] = Seq.empty,
+    postUpdateConsoleActions: Seq[Console => Try[Unit]] = Seq.empty)
     extends CommandOutcome
 //TODO
 //case class UndoCommandOutcome(commander: BaseCommand, atSystemTime: Long)

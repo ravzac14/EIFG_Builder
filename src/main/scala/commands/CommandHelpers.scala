@@ -3,12 +3,13 @@ package commands
 import commands.types.{ BaseCommand, Command }
 import commands.DefaultCommands._
 import commands.Exceptions.{
-  MissingInputException,
+  MissingFreeformInputException,
   PartialCommandMatchException,
   UnknownInputException
 }
 import game_logic.global.GameState
 import game_logic.global.game_loop.{ BaseGameLoop, MainGameLoopParams }
+import game_logic.location.Direction
 import system.logger.Logger
 import system.logger.Logger.log
 import ui.console.Console
@@ -124,6 +125,8 @@ object CommandHelpers {
       customCommands: Seq[BaseCommand] = Seq.empty,
       atSystemTime: Long = System.currentTimeMillis())(implicit
       ec: ExecutionContext): Try[Command] = {
+    val gameManager = previousGameLoop.getParams.gameManager
+
     def asCommand(typed: BaseCommand): Success[Command] =
       Success(Command(line, typed))
 
@@ -154,7 +157,7 @@ object CommandHelpers {
         asCommand(
           AddNote(
             rest.mkString(CommandWordDelim),
-            previousGameLoop.getParams.gameManager.playerManager.characterState.notebook,
+            gameManager.playerManager.notebook,
             atSystemTime))
       case Seq(firstInput, secondInput, rest @ _*)
           if AddNote.matches(Seq(firstInput, secondInput)) &&
@@ -162,10 +165,10 @@ object CommandHelpers {
         asCommand(
           AddNote(
             rest.mkString(CommandWordDelim),
-            previousGameLoop.getParams.gameManager.playerManager.characterState.notebook,
+            gameManager.playerManager.notebook,
             atSystemTime))
       case whole if AddNote.matches(formatSeqAsCommand(whole)) =>
-        Failure(new MissingInputException(whole, AddNote))
+        Failure(new MissingFreeformInputException(whole, AddNote))
 
       // Remove Note
       case Seq(firstInput, secondInput, rest @ _*)
@@ -175,16 +178,14 @@ object CommandHelpers {
               .isSuccess =>
         asCommand(RemoveNote(rest.map(_.toInt), atSystemTime))
       case whole if RemoveNote.matches(formatSeqAsCommand(whole)) =>
-        Failure(new MissingInputException(whole, RemoveNote))
+        Failure(new MissingFreeformInputException(whole, RemoveNote))
 
       // Read Notebook
       case whole
           if ReadNotebook.matches(whole) &&
             (whole.length == 1 || whole.length == 2) =>
         asCommand(
-          ReadNotebook(
-            previousGameLoop.getParams.gameManager.playerManager.characterState.notebook,
-            atSystemTime))
+          ReadNotebook(gameManager.playerManager.notebook, atSystemTime))
       case whole if ReadNotebook.matches(whole) =>
         Failure(new PartialCommandMatchException(whole, ReadNotebook))
 
@@ -213,11 +214,23 @@ object CommandHelpers {
             atSystemTime,
             Some(rest.head)))
       case whole if CommandHistory.matches(formatSeqAsCommand(whole)) =>
-        Failure(new MissingInputException(whole, CommandHistory))
+        Failure(new MissingFreeformInputException(whole, CommandHistory))
 
       // List Commands
       case whole if ListCommands.matches(whole) =>
         asCommand(ListCommands(customCommands, atSystemTime))
+
+      // Move
+      case whole
+          if Move.matches(whole) &&
+            Move.validateInput(whole).isSuccess &&
+            whole.lastOption.nonEmpty &&
+            Direction.findByAnyMeans(whole.last).isSuccess =>
+        asCommand(
+          Move(
+            gameManager = gameManager,
+            direction = Direction.findByAnyMeans(whole.last).get,
+            atSystemTime = atSystemTime))
 
       // Default - Error
       case whole => Failure(new UnknownInputException(whole))

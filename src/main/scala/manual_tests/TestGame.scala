@@ -1,21 +1,22 @@
-package builder
+package manual_tests
 
 import base.DateTime
-import game_logic.character.{ Actor, CharacterState }
+import game_logic.character.{ Character, Inventory }
+import game_logic.global.game_loop.menus.MainMenuLoop
+import game_logic.global.game_loop.title_sequences.BaseTitleSequenceLoop
 import game_logic.global.game_loop.{
   BaseGameLoop,
   GameLoopParams,
   MainGameLoopParams
 }
-import game_logic.global.{ GameConfig, GameState }
-import game_logic.global.game_loop.menus.MainMenuLoop
-import game_logic.global.game_loop.title_sequences.BaseTitleSequenceLoop
 import game_logic.global.managers.{
   GameManager,
   GameWorldManager,
   PlayerManager
 }
-import game_logic.location.GameWorld
+import game_logic.global.{ GameConfig, GameState }
+import game_logic.item.Notebook
+import game_logic.location.{ GameWorld, Room }
 import ui.console.{ ConsoleConfig, StdOutConsole }
 import ui.title_sequence.TitleSequenceHelpers
 
@@ -26,7 +27,7 @@ import scala.concurrent.duration._
 object TestGame extends App {
   implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.global
 
-  val TestWorld: GameWorld = ???
+  val (testWorld, startingPosition): (GameWorld, Room) = TestWorld.build
 
   @tailrec
   def looper[T <: GameLoopParams](
@@ -41,15 +42,21 @@ object TestGame extends App {
   val gameConfig =
     GameConfig.empty(
       gameTurnsPerMinute = 1,
-      startingGameTime = DateTime(year = 1990, month = 1, day = 1))
-  val player = new Actor()
-  val world = TestWorld
+      startingGameTime = DateTime(year = 1990, month = 1, day = 1),
+      startingPosition = startingPosition)
+  val player = Character()
   val gameManager =
     GameManager(
-      GameState.empty(startingDateTime = gameConfig.startingGameTime),
-      PlayerManager(player, CharacterState.empty),
-      GameWorldManager(world),
-      gameConfig)
+      state = GameState.empty(startingDateTime = gameConfig.startingGameTime),
+      playerManager = PlayerManager(
+        player = player,
+        notebook = Notebook.empty,
+        inventory = Inventory.empty,
+        position = startingPosition,
+        previousPositions = Seq.empty),
+      gameWorldManager = GameWorldManager(testWorld),
+      config = gameConfig
+    )
   val state =
     MainGameLoopParams.empty(console, timeout = 30.seconds, gameManager)
   val secondLoop = new MainMenuLoop(state)

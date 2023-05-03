@@ -10,6 +10,9 @@ package parser.models
   *             "red door", or if all the doors in a room are brown, perhaps one door is named "northern
   *             brown door", and another "southern brown door".
   *
+  *             A [[PortalIn]] has a [[PortalIn.direction]] which should be filled with one of the
+  *             [[Direction]] values. This represents which edge of the room the portal lies on.
+  *
   *             A [[PortalIn]] has a [[PortalIn.simpleDescription]] field that will be the first thing a
   *             Player reads when entering the space, if the [[PortalIn]] is not hidden of course.
   *
@@ -34,6 +37,7 @@ package parser.models
 
 case class PortalIn(
     name: String,
+    direction: String,
     simpleDescription: String,
     leadsTo: String,
     detailedDescription: Option[String] = None,

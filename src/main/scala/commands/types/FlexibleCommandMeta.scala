@@ -3,9 +3,9 @@ package commands.types
 import commands.CommandHelpers.CommandWordDelim
 
 trait FlexibleCommandMeta extends CommandMeta {
-  def singleValues: Seq[String]
-  def primaryCommandValues: Seq[String]
-  def secondaryCommandValues: Seq[String]
+  def singleValues: Seq[String] = Seq.empty
+  def primaryCommandValues: Seq[String] = Seq.empty
+  def secondaryCommandValues: Seq[String] = Seq.empty
 
   def values: Seq[String] = {
     val compoundValues =
