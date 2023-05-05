@@ -11,6 +11,8 @@ import system.logger.Logger
 import ui.console.Console
 import ui.menu.MenuHelpers.MenuBackCommands
 
+import scala.util.Try
+
 case class MenuTree[T <: GameLoopParams](
     name: String,
     menuScreens: Seq[MenuScreen[T]],
@@ -29,7 +31,6 @@ case class MenuTree[T <: GameLoopParams](
     console.writeUntyped(output)
   }
 
-  // Either it takes care of it's own side effects or it describes to the Loop where to go next
   def processSelection(
       selection: String): Either[MenuTree[T], BaseGameLoop[T]] = {
     val formattedInput = CommandHelpers.formatLine(selection)

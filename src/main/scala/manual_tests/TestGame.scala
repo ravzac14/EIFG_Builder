@@ -59,7 +59,7 @@ object TestGame extends App {
     )
   val state =
     MainGameLoopParams.empty(console, timeout = 30.seconds, gameManager)
-  val secondLoop = new MainMenuLoop(state)
+  val secondLoop = new MainMenuLoop(state, MainMenuLoop.mainMenuTree(state))
   val openingTitleSequence =
     TitleSequenceHelpers.buildTitleSequence(
       cardArts = Seq("First Card.", "Second Card.", "Third Card."),

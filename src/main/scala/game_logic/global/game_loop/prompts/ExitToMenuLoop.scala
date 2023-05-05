@@ -31,7 +31,10 @@ object ExitToMenuLoop {
           SideEffectResult(
             name = "yes_exit",
             matchingValues = PromptHelpers.affirmativePromptValues,
-            newLoop = new MainMenuLoop(previousGameLoop.getParams)),
+            newLoop = new MainMenuLoop(
+              previousGameLoop.getParams,
+              MainMenuLoop.mainMenuTree(previousGameLoop.getParams))
+          ),
           SideEffectResult(
             name = "no_exit",
             matchingValues = PromptHelpers.negativePromptValues,

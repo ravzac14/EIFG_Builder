@@ -36,4 +36,3 @@ support informational commands, ie "Left doesn't work to move, please provide on
     or something worded better
 movement commands
 parse certain input as one word (such as compound words)
-make initial loop out of menu print world desc
